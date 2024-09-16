@@ -5,13 +5,7 @@
 #'
 #' Author: C19 Data & Analytics Team
 #' 
-#' Core functions for the shiny app.
-#'
-# set-up ----
-start_vars <- ls()
-
-# source set up file
-source("R/set-up/set-up.R")
+#' Core functions for the shiny app. Sourced in the `set-up.R` script.
 
 
 # Add n linebreaks ----
