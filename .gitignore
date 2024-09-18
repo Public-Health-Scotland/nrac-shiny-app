@@ -48,5 +48,12 @@ po/*~
 # RStudio Connect folder
 rsconnect/
 
-# data
+# data folder
 app/data/
+
+# common data file extensions
+*.csv
+*.rds
+*.xlsx
+*.zip
+
