@@ -5,7 +5,7 @@
 #'
 #' Author:Maiana Sanjuan
 #' Runtime:
-#' Memory:16GB
+#' Memory:10GB
 #' CPUs:1
 #'
 # set-up ----
