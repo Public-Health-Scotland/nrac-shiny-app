@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 #' import-app-data.R
+=======
+#' clean-app-data.R
+>>>>>>> develop
 #' Health Finance & Analytics
 #' Code written September 2024
 #' R version 4.1.2 (2021-11-01)
