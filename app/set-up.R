@@ -12,9 +12,12 @@
 # load packages ----
 library(here)
 library(glue)
-library(openxlsx)
+library(stringr)
 library(magrittr)
+library(tidyr)
+library(dplyr)
 library(janitor)
+library(openxlsx)
 library(shiny)
 
 
@@ -27,12 +30,17 @@ import_data <- ifelse(length(list.files(here("data-pack"))) == 0, TRUE, FALSE)
 
 tidy_data <- ifelse(length((list.files(here("app/data/")))) == 0, TRUE, FALSE)
 
-data_years <- jsonlite::fromJSON("lookups/data-urls.json") %>%
+data_years <- jsonlite::fromJSON(here("lookups/data-urls.json")) %>%
   select(target_year_start, target_year_end)
 
 # create dirs ----
-if(!("data" %in% list.dirs(here("app"), full.names = FALSE))){
+
+if(!("data" %in% list.dirs(here("app"), full.names = FALSE, recursive = FALSE))){
   dir.create(here("app", "data"))
+}
+
+if(!("data-pack" %in% list.dirs(here(), full.names = FALSE, recursive = FALSE))){
+  dir.create(here("data-pack"))
 }
 
 # import and clean data ----
@@ -54,5 +62,15 @@ if(isTRUE(import_data)){
 if(isTRUE(tidy_data)){
   source(here("tidy-app-data.R"), local = TRUE)
 }
+
+
+# load app data ----
+data_filepaths <- as.list(list.files(here("app", "data"), full.names = TRUE))
+
+names(data_filepaths) <- str_remove(list.files(here("app", "data")),
+                                    "\\.([^.]*)$")
+
+list2env(lapply(data_filepaths, readRDS), envir = .GlobalEnv)
+
 #end_time = timestamp()
 
