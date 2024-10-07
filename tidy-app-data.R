@@ -40,18 +40,18 @@ gpp_df <- tibble()
 
 for(f in datazone_hscp_files){
   hchs_df %<>% bind_rows(
-    read_excel_data(f, hb_sheet_name, hb_data_row_index, "hchs")
-  )
+    read_excel_data(f, hb_sheet_name, hb_data_row_index, "hchs") %>% 
+    clean_names()
+    )
   
   gpp_df %<>% bind_rows(
-    read_excel_data(f, hb_sheet_name, hb_data_row_index, "gpp")
+    read_excel_data(f, hb_sheet_name, hb_data_row_index, "gpp") %>% 
+      clean_names()
   )
 }
 
-jsonlite::write_json(hchs_df %<>% clean_names(), 
-                     here("app", "data", "hb-data-hchs.json"))
-jsonlite::write_json(gpp_df %<>% clean_names(), here("app", "data",
-                                                     "hb-data-gpp.json"))
+saveRDS(hchs_df, here("app", "data", "hb_data_hchs.rds"))
+saveRDS(gpp_df, here("app", "data","hb_data_gpp.rds"))
 
 # clean environment ----
 rm(list = setdiff(ls(), start_vars))
