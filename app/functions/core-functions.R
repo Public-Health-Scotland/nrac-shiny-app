@@ -16,8 +16,8 @@ icon_no_warning_fn = function(icon_name) {
   icon(icon_name, verify_fa=FALSE)
 }
 
-withNavySpinner <- function(out){
-  withSpinner(out, color = navy)
+withNavySpinner <- function(out, color_){
+  withSpinner(out, color = color_)
 }
 
 # Get health board name ----

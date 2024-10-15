@@ -62,5 +62,9 @@ dev/
 *.json
 *.zip
 
+# credentials
+app/password-protect/create-credentials.R
+
+# exceptions
 !data-urls.json
 !hb_cypher_to_name.json
