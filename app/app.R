@@ -38,8 +38,27 @@ ui <- fluidPage(
         title = "Introduction",
         icon = icon_no_warning_fn("circle-info"),
         value = "intro",
-        source(file.path("pages/introduction/intro-ui.R"), local = TRUE)$value
+        source(file.path("pages/introduction/introduction-ui.R"), local = TRUE)$value
+      ),
+      
+      ## populations ----
+      
+      tabPanel(
+        title = "Populations",
+        icon = icon_no_warning_fn("users"),
+        value = "populations",
+        source(file.path("pages/populations/populations-ui.R"), local = TRUE)$value
+      ),
+      
+      
+      ## trends ----
+      tabPanel(
+        title = "Trends",
+        icon = icon_no_warning_fn("chart-line"),
+        value = "trends",
+        source(file.path("pages/trends/trends-ui.R"), local = TRUE)$value
       )
+      
       
     ) # navbar
     
@@ -50,13 +69,19 @@ ui <- fluidPage(
 # server ----
 server <- function(input, output, session){
   
+  if(password_protect){
+    source(file.path("password-protect/password-protect-server.R"), local = TRUE)$value
+  }
+  
   # modules ----
   
   # functions ----
   
   # pages ----
-  source(file.path("pages/introduction/intro-server.R"), local = TRUE)$value
+  source(file.path("pages/introduction/introduction-server.R"), local = TRUE)$value
 }
 
 # run the application ----
+# conditionally add password protect app UI
+if (password_protect){ ui <- secure_app(ui) }
 shinyApp(ui=ui, server=server)

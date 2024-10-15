@@ -9,16 +9,13 @@
 #' CPUs:1
 
 #start_time = timestamp()
-# load packages ----
-library(here)
-library(glue)
-library(stringr)
-library(magrittr)
-library(tidyr)
-library(dplyr)
-library(janitor)
-library(openxlsx)
-library(shiny)
+
+# load all packages ----
+library(renv)
+lockfile <- renv::lockfile_read()
+packages <- names(lockfile$Packages)
+
+invisible(lapply(packages, library, character.only = TRUE))
 
 
 # load functions ----
@@ -32,6 +29,17 @@ tidy_data <- ifelse(length((list.files(here("app/data/")))) == 0, TRUE, FALSE)
 
 data_years <- jsonlite::fromJSON(here("lookups/data-urls.json")) %>%
   select(target_year_start, target_year_end)
+
+password_protect <- TRUE
+
+if(isTRUE(password_protect)){
+  source(here("app", "password-protect", "create-credentials.R"), local = TRUE)
+}
+
+navy <- "#010068"
+
+# filepaths ----
+credentials_path <- here::here("app", "password-protect", "credentials.rds")
 
 # create dirs ----
 
@@ -71,6 +79,11 @@ names(data_filepaths) <- str_remove(list.files(here("app", "data")),
                                     "\\.([^.]*)$")
 
 list2env(lapply(data_filepaths, readRDS), envir = .GlobalEnv)
+
+# user input lists ----
+
+# intro page sidebar buttons list
+home_list <- c("About", "Use", "Contact", "Accessibility")
 
 #end_time = timestamp()
 
