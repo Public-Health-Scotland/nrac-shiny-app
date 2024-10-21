@@ -11,72 +11,43 @@
 #start_time = timestamp()
 
 # load all packages ----
-library(renv)
-lockfile <- renv::lockfile_read()
-packages <- names(lockfile$Packages)
 
-invisible(lapply(packages, library, character.only = TRUE))
+# phsmethods package is not on CRAN, install and load separately
+if (! requireNamespace("phsmethods", quietly = TRUE)) {
+  remotes::install_github("Public-Health-Scotland/phsmethods")
+}
 
+library(janitor)
+library(here)
+library(tidyr)
+library(dplyr)
+library(magrittr)
+library(shinyWidgets)
+library(shinycssloaders)
+library(rsconnect)
+library(phsmethods)
+library(stringr)
 
 # load functions ----
-source(here("app/functions/core-functions.R"))
+source("functions/core-functions.R")
 
 # parameters ----
 
-import_data <- ifelse(length(list.files(here("data-pack"))) == 0, TRUE, FALSE)
-
-tidy_data <- ifelse(length((list.files(here("app/data/")))) == 0, TRUE, FALSE)
-
-data_years <- jsonlite::fromJSON(here("lookups/data-urls.json")) %>%
-  select(target_year_start, target_year_end)
-
-password_protect <- TRUE
+password_protect <- FALSE
 
 if(isTRUE(password_protect)){
-  source(here("app", "password-protect", "create-credentials.R"), local = TRUE)
+  source("password-protect/create-credentials.R", local = TRUE)
 }
 
 navy <- "#010068"
 
 # filepaths ----
-credentials_path <- here::here("app", "password-protect", "credentials.rds")
-
-# create dirs ----
-
-if(!("data" %in% list.dirs(here("app"), full.names = FALSE, recursive = FALSE))){
-  dir.create(here("app", "data"))
-}
-
-if(!("data-pack" %in% list.dirs(here(), full.names = FALSE, recursive = FALSE))){
-  dir.create(here("data-pack"))
-}
-
-# import and clean data ----
-
-# data takes approx 20 min to download
-if(isTRUE(import_data)){
-   
-  for(i in 1:nrow(data_years)){
-    
-    data_years_row <- data_years %>% slice(i)
-    
-    source(here("import-app-data.R"), 
-           local = list2env(list(start_year = data_years_row$target_year_start,
-                            end_year = data_years_row$target_year_end)))
-    
-  }
-}
-
-if(isTRUE(tidy_data)){
-  source(here("tidy-app-data.R"), local = TRUE)
-}
-
+credentials_path <- "password-protect/credentials.rds"
 
 # load app data ----
-data_filepaths <- as.list(list.files(here("app", "data"), full.names = TRUE))
+data_filepaths <- as.list(list.files("data", full.names = TRUE))
 
-names(data_filepaths) <- str_remove(list.files(here("app", "data")),
-                                    "\\.([^.]*)$")
+names(data_filepaths) <- str_remove(list.files("data"), "\\.([^.]*)$")
 
 list2env(lapply(data_filepaths, readRDS), envir = .GlobalEnv)
 

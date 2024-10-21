@@ -64,6 +64,7 @@ dev/
 
 # credentials
 app/password-protect/create-credentials.R
+app/deploy-app/deployment-secrets.R
 
 # exceptions
 !data-urls.json
