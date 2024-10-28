@@ -22,18 +22,26 @@ library(here)
 library(tidyr)
 library(dplyr)
 library(magrittr)
+library(phsmethods)
+library(stringr)
+library(jsonlite)
+
 library(shinyWidgets)
 library(shinycssloaders)
 library(rsconnect)
-library(phsmethods)
-library(stringr)
+library(shinymanager)
+library(bslib)
+
 
 # load functions ----
 source("functions/core-functions.R")
 
+# filepaths ----
+credentials_path <- "password-protect/credentials.rds"
+
 # parameters ----
 
-password_protect <- FALSE
+password_protect <- FALSE #TRUE
 
 if(isTRUE(password_protect)){
   source("password-protect/create-credentials.R", local = TRUE)
@@ -41,8 +49,6 @@ if(isTRUE(password_protect)){
 
 navy <- "#010068"
 
-# filepaths ----
-credentials_path <- "password-protect/credentials.rds"
 
 # load app data ----
 data_filepaths <- as.list(list.files("data", full.names = TRUE))
@@ -55,6 +61,8 @@ list2env(lapply(data_filepaths, readRDS), envir = .GlobalEnv)
 
 # intro page sidebar buttons list
 home_list <- c("About", "Use", "Contact", "Accessibility")
+hb_list <- fromJSON("lookups/hb_cypher_to_name.json") %>% 
+  pull(hb_name)
 
 #end_time = timestamp()
 
