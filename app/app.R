@@ -53,10 +53,11 @@ ui <- fluidPage(
       
       ## trends ----
       tabPanel(
-        title = "Trends",
+        title = "Shares and Indices",
         icon = icon_no_warning_fn("chart-line"),
-        value = "trends",
-        source(file.path("pages/trends/trends-ui.R"), local = TRUE)$value
+        value = "shares",
+        source(file.path("pages/shares-indices/shares-indices-ui.R"), 
+               local = TRUE)$value
       )
       
       

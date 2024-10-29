@@ -1,8 +1,8 @@
 # jump to buttons observe event ----
 observeEvent(input$jump_to_populations, 
              {updateTabsetPanel(session, "intabset", selected = "populations")})
-observeEvent(input$jump_to_trends, 
-             {updateTabsetPanel(session, "intabset", selected = "trends")})
+observeEvent(input$jump_to_shares, 
+             {updateTabsetPanel(session, "intabset", selected = "shares")})
 
 
 # sidebar tab outputs ----
@@ -19,7 +19,7 @@ output$introduction_about <- renderUI({
                   resource allocation formula."))),
     fluidRow(
       column(4,tags$div(class = "special_button",
-                        actionButton("jump_to_trends", "Trends"))),
+                        actionButton("jump_to_shares", "Shares and Indices"))),
       column(8, p("This section provides the latest trends in shares and indices
                   produced by the formula.")))
     ) #taglist
