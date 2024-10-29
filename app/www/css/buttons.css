@@ -233,3 +233,9 @@ color:white;
     outline: 0px !Important;
 }
 
+/* accordion button */
+.accordion-button{color: var(--navy);
+  border: 0px solid var(--navy);
+  font-size: 16px;
+  background:white;
+} 

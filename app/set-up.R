@@ -13,7 +13,7 @@
 # load all packages ----
 
 # phsmethods package is not on CRAN, install and load separately
-if (! requireNamespace("phsmethods", quietly = TRUE)) {
+if (!requireNamespace("phsmethods", quietly = TRUE)) {
   remotes::install_github("Public-Health-Scotland/phsmethods")
 }
 
@@ -63,6 +63,9 @@ list2env(lapply(data_filepaths, readRDS), envir = .GlobalEnv)
 home_list <- c("About", "Use", "Contact", "Accessibility")
 hb_list <- fromJSON("lookups/hb_cypher_to_name.json") %>% 
   pull(hb_name)
+stat_list <- c("Shares", "Indices")
+programme_list <- c("All", "Hospital and Community Health Services", 
+                    "General Practice and Prescribing")
 
 #end_time = timestamp()
 
