@@ -12,7 +12,9 @@ tagList(titlePanel("Shares and Indices"),
                      "Percentage Change by Component"), 
             accordion_panel("Time Series by Component", 
                       navset_card_underline(
-                        nav_panel("Plot"),
+                        nav_panel("Plot",
+                                  highchartOutput("test_plot")
+                                  ),
                         nav_panel("Table")
                       )
             ),

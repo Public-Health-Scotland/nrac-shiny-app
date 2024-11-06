@@ -5,20 +5,24 @@
 envir_objs <- ls()
 
 # load all packages ----
-not_on_cran <- "phsmethods"
+not_on_cran <- c("phsmethods", "phsstyles")
 
 library(renv)
 renv::restore(exclude = not_on_cran)
 lockfile <- renv::lockfile_read()
-packages <- names(lockfile$Packages)[names(lockfile$Packages)!=not_on_cran]
+packages <- names(lockfile$Packages)[names(lockfile$Packages)!= not_on_cran]
 
 invisible(lapply(packages, library, character.only = TRUE))
 
-# phsmethods package is not on CRAN, install and load separately
-if (! requireNamespace(not_on_cran, quietly = TRUE)) {
-  remotes::install_github("Public-Health-Scotland/phsmethods")
+# Public Health Scotland packages are not on CRAN, install and load separately
+for(pkg in not_on_cran){
+  if (!requireNamespace(not_on_cran, quietly = TRUE)) {
+    remotes::install_github(glue("Public-Health-Scotland/{pkg}"))
+  }
 }
+
 library(phsmethods)
+library(phsstyles)
 
 # parameters ----
 data_years <- jsonlite::fromJSON(here("lookups/data-urls.json")) %>%

@@ -80,6 +80,7 @@ server <- function(input, output, session){
   
   # pages ----
   source(file.path("pages/introduction/introduction-server.R"), local = TRUE)$value
+  source(file.path("pages/shares-indices/shares-indices-server.R"), local = TRUE)$value
 }
 
 # run the application ----
