@@ -12,10 +12,17 @@
 
 # load all packages ----
 
-# phsmethods package is not on CRAN, install and load separately
+# Public Health Scotland package are not on CRAN, install
 if (!requireNamespace("phsmethods", quietly = TRUE)) {
   remotes::install_github("Public-Health-Scotland/phsmethods")
 }
+
+if(!requireNamespace("phsstyles", quietly = TRUE)){
+  remotes::install_github("Public-Health-Scotland/phsstyles")
+  
+}
+
+
 
 library(janitor)
 library(here)
@@ -25,12 +32,14 @@ library(magrittr)
 library(phsmethods)
 library(stringr)
 library(jsonlite)
+library(RSQLite)
 
 library(shinyWidgets)
 library(shinycssloaders)
 library(rsconnect)
 library(shinymanager)
 library(bslib)
+library(highcharter)
 
 
 # load functions ----
@@ -41,7 +50,7 @@ credentials_path <- "password-protect/credentials.rds"
 
 # parameters ----
 
-password_protect <- FALSE #TRUE
+password_protect <- TRUE
 
 if(isTRUE(password_protect)){
   source("password-protect/create-credentials.R", local = TRUE)
