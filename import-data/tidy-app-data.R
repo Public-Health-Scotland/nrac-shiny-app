@@ -16,7 +16,7 @@
 
 start_vars <- ls()
 
-hb_lookup_path <- here("app", "lookups", "hb_cypher_to_name.json")
+hb_lookup_path <- here("app", "lookups", "hb_cypher_to_name.rds")
 sqlite_path <- here("app", "data", "nrac-db.sqlite")
 
 # read in the HB data for each financial year
@@ -113,7 +113,7 @@ index_shares_all <- index_shares_programme %>%
 
 # bind all the index and shares data and tidy it
 index_shares <- bind_rows(index_shares_all, index_shares_programme) %>% 
-  left_join(bind_rows(fromJSON(file = hb_lookup_path)), 
+  left_join(readRDS(hb_lookup_path), 
             by = c("hb" = "hb_cypher"))
 
 # store the the indices and shares data in a sqlite file
