@@ -48,11 +48,11 @@ source("functions/core-functions.R")
 # filepaths ----
 credentials_path <- "password-protect/credentials.rds"
 
-sqlite_path <- here("app", "data", "nrac-db.sqlite")
+sqlite_path <- "data/nrac-db.sqlite"
 
 # parameters ----
 
-password_protect <- TRUE
+password_protect <- FALSE #TRUE
 
 if (isTRUE(password_protect)) {
   source("password-protect/create-credentials.R", local = TRUE)
@@ -81,7 +81,7 @@ dbDisconnect(nracdb)
 intro_list <- list(side_bar = c("About", "Use", "Contact", "Accessibility"))
 
 # populations
-pop_list <- list(hb_names = bind_rows(fromJSON(file = "lookups/hb_cypher_to_name.json")) %>%
+pop_list <- list(hb_names = readRDS("lookups/hb_cypher_to_name.rds") %>%
                    pull(hb_name))
 
 # shares and indices
