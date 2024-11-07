@@ -7,6 +7,10 @@
 #' Runtime:
 #' Memory:10GB
 #' CPUs:1
+#' 
+#' Reads in data from `data-pack/` derives the population shares and indices
+#' for all care programmes. Binds everything together and writes output to a 
+#' SQLite database.
 #'
 # tidy data for the app ----
 
@@ -117,7 +121,7 @@ nracdb <- dbConnect(RSQLite::SQLite(), sqlite_path)
 dbWriteTable(nracdb, "index_shares", index_shares, overwrite = TRUE)
 
 # test query
-#dbGetQuery(nracdb, 'SELECT * FROM index_shares LIMIT 5')
+# dbGetQuery(nracdb, 'SELECT * FROM index_shares LIMIT 5')
 
 dbDisconnect(nracdb)
 

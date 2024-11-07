@@ -7,6 +7,9 @@
 #' Runtime:
 #' Memory:10GB
 #' CPUs:1
+#' 
+#' imports several years of data from the NRAC PHS publications and saves all 
+#' the outputs in `data-pack/`
 #'
 # import data from Public Health Scotland ----
 
@@ -24,7 +27,7 @@ fin_year_suffix <- glue("-20{start_year}-{end_year}")
 dest_folder <- "data-pack"
 
 # import data from the NRAC publication for selected financial year
-data_url <- jsonlite::fromJSON(here("lookups/data-urls.json")) %>% 
+data_url <- jsonlite::fromJSON(here("app/lookups/data-urls.json")) %>% 
   filter(target_year_start == start_year, target_year_end == end_year) %>% 
   pull(data_url)
 

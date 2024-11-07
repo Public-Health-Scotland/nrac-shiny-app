@@ -17,7 +17,7 @@ if (!requireNamespace("phsmethods", quietly = TRUE)) {
   remotes::install_github("Public-Health-Scotland/phsmethods")
 }
 
-if(!requireNamespace("phsstyles", quietly = TRUE)){
+if (!requireNamespace("phsstyles", quietly = TRUE)) {
   remotes::install_github("Public-Health-Scotland/phsstyles")
   
 }
@@ -48,33 +48,47 @@ source("functions/core-functions.R")
 # filepaths ----
 credentials_path <- "password-protect/credentials.rds"
 
+sqlite_path <- here("app", "data", "nrac-db.sqlite")
+
 # parameters ----
 
 password_protect <- TRUE
 
-if(isTRUE(password_protect)){
+if (isTRUE(password_protect)) {
   source("password-protect/create-credentials.R", local = TRUE)
 }
 
 navy <- "#010068"
 
 
-# load app data ----
-data_filepaths <- as.list(list.files("data", full.names = TRUE))
+# import data ----
+nracdb <- dbConnect(SQLite(), sqlite_path)
 
-names(data_filepaths) <- str_remove(list.files("data"), "\\.([^.]*)$")
+all_index_shares <- dbGetQuery(nracdb, 'SELECT * FROM index_shares')
 
-list2env(lapply(data_filepaths, readRDS), envir = .GlobalEnv)
+dbDisconnect(nracdb)
+# data_filepaths <- as.list(list.files("data", full.names = TRUE))
+#
+# names(data_filepaths) <- str_remove(list.files("data"), "\\.([^.]*)$")
+#
+# list2env(lapply(data_filepaths, readRDS), envir = .GlobalEnv)
 
 # user input lists ----
 
-# intro page sidebar buttons list
-home_list <- c("About", "Use", "Contact", "Accessibility")
-hb_list <- fromJSON("lookups/hb_cypher_to_name.json") %>% 
-  pull(hb_name)
-stat_list <- c("Shares", "Indices")
-programme_list <- c("All", "Hospital and Community Health Services", 
-                    "General Practice and Prescribing")
+# one list per page
+
+# intro page
+intro_list <- list(side_bar = c("About", "Use", "Contact", "Accessibility"))
+
+# populations
+pop_list <- list(hb_names = bind_rows(fromJSON(file = "lookups/hb_cypher_to_name.json")) %>%
+                   pull(hb_name))
+
+# shares and indices
+# user inputs are mapped to categorical wariables in the data
+shares_indices_list <- list(
+  stat = list(share = "Shares", index = "Indices"),
+  care_programme = list(all = "All", hchs = "Hospital and Community Health Services", gpp = "General Practice and Prescribing")
+)
 
 #end_time = timestamp()
-

@@ -1,7 +1,7 @@
 sidebarLayout(
   sidebarPanel(width = 4,
                radioGroupButtons("home_select", status = "home",
-                                 choices = home_list,
+                                 choices = intro_list$side_bar,
                                  direction = "vertical", justified = T)),
   
   mainPanel(width = 8,
