@@ -19,7 +19,9 @@ tagList(
       open = c("Time Series by Component", "Percentage Change by Component"),
       accordion_panel(
         "Time Series by Component",
-        navset_card_underline(nav_panel("Plot", highchartOutput("test_plot")), nav_panel("Table"))
+        navset_card_underline(nav_panel("Plot", 
+                                        girafeOutput("test_plot")), 
+                              nav_panel("Table"))
       ),
       accordion_panel(
         "Percentage Change by Component",
