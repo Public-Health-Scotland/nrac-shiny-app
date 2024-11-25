@@ -12,7 +12,8 @@ plot_shares_indices_lines <- function(data_, percentage, chart_title){
     geom_point_interactive(
       aes(
         tooltip = paste0("Healthboard: ", hb_name, "\nYear: ", 
-                         target_year_start, "\nValue: ", value), # Tooltip for points
+                         target_year_start, "\nValue: ", 
+                         format_val(value, percent_fmt = percentage, 2)), # Tooltip for points
         data_id = paste0(hb_name, "-", target_year_start)
       ),
       size = 1

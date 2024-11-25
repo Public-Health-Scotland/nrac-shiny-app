@@ -78,6 +78,15 @@ format_entry <- function(x, dp = 0, perc = F) {
   }
 }
 
+# format values for tooltips ----
+format_val <- function(x, percent_fmt, decimal_place){
+if(isTRUE(percent_fmt)){
+  sprintf(glue("%.{decimal_place}f%%"), x * 100)
+} else {
+  sprintf(glue("%.{decimal_place}f"), x)
+  
+}
+}
 
 # Load data function ----
 # load_rds_file <- function(rds){

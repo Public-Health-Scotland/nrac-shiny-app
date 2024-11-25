@@ -85,6 +85,7 @@ for(file_ in list.files("functions/", full.names = TRUE)){
 }
 
 
+
 # filepaths ----
 credentials_path <- "password-protect/credentials.rds"
 
@@ -92,7 +93,7 @@ sqlite_path <- "data/nrac-db.sqlite"
 
 # parameters ----
 
-password_protect <- TRUE
+password_protect <- FALSE #TRUE
 
 if (isTRUE(password_protect)) {
   source("password-protect/create-credentials.R", local = TRUE)

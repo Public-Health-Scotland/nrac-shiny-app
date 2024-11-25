@@ -47,7 +47,7 @@ output$test_plot <- renderGirafe({
   
   # if its a share format as percentage
   is_percentage <- switch(name_(), "share" = TRUE, "index" = FALSE)
-  
+  browser()
   # stat_input <- input$stat_in_shares
   
   title_ <- glue("Line chart of the Age-Sex {input$stat_in_shares} by Healthboard")
