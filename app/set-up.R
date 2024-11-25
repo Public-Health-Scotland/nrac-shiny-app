@@ -22,10 +22,9 @@ if (!requireNamespace("phsstyles", quietly = TRUE)) {
   
 }
 
-
-
 library(janitor)
 library(here)
+library(glue)
 library(tidyr)
 library(dplyr)
 library(magrittr)
@@ -34,16 +33,57 @@ library(stringr)
 library(jsonlite)
 library(RSQLite)
 
+library(shiny)
 library(shinyWidgets)
 library(shinycssloaders)
 library(rsconnect)
 library(shinymanager)
 library(bslib)
+
 library(highcharter)
+library(ggplot2)
+library(ggtext)
+library(ggiraph)
+library(showtext)
+library(systemfonts)
+library(scales)
+
+
+# fonts
+#font_dir <- here("app", "www", "fonts")
+
+# Register the Karla font, use systemfonts for ggiraph package
+
+if (!"Karla" %in% system_fonts()$family) {
+  systemfonts::register_font(
+    name = "Karla",
+    plain = "www/fonts/karla/Karla-Regular.ttf",
+    bold = "www/fonts/karla/Karla-Bold.ttf",
+    italic = "www/fonts/karla/Karla-Italic.ttf"
+  )
+}
+
+font_add(
+  family = "Karla",
+  regular = "www/fonts/karla/Karla-Regular.ttf",
+  bold = "www/fonts/karla/Karla-Bold.ttf",
+  italic = "www/fonts/karla/Karla-Italic.ttf"
+)
+
+font_dir <- "www/fonts/karla/"
+cat("Regular font path:", file.exists(file.path(font_dir, "Karla-Regular.ttf")), "\n")
+
+
+# render fonts
+showtext_auto()
 
 
 # load functions ----
-source("functions/core-functions.R")
+
+for(file_ in list.files("functions/", full.names = TRUE)){
+  source(file_)
+}
+
 
 # filepaths ----
 credentials_path <- "password-protect/credentials.rds"
@@ -52,7 +92,7 @@ sqlite_path <- "data/nrac-db.sqlite"
 
 # parameters ----
 
-password_protect <- FALSE #TRUE
+password_protect <- TRUE
 
 if (isTRUE(password_protect)) {
   source("password-protect/create-credentials.R", local = TRUE)
