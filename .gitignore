@@ -51,9 +51,21 @@ rsconnect/
 # data folder
 app/data/
 
+# dev folder
+dev/
+
 # common data file extensions
 *.csv
 *.rds
 *.xlsx
+*.xlsm
+*.json
 *.zip
 
+# credentials
+app/password-protect/create-credentials.R
+app/deploy-app/deployment-secrets.R
+
+# exceptions
+!data-urls.json
+!hb_cypher_to_name.json

@@ -8,22 +8,87 @@
 #' Memory:16GB
 #' CPUs:1
 
-# load packages ----
+#start_time = timestamp()
+
+# load all packages ----
+
+# Public Health Scotland package are not on CRAN, install
+if (!requireNamespace("phsmethods", quietly = TRUE)) {
+  remotes::install_github("Public-Health-Scotland/phsmethods")
+}
+
+if (!requireNamespace("phsstyles", quietly = TRUE)) {
+  remotes::install_github("Public-Health-Scotland/phsstyles")
+  
+}
+
+
+
+library(janitor)
 library(here)
-library(glue)
-library(shiny)
+library(tidyr)
+library(dplyr)
+library(magrittr)
+library(phsmethods)
+library(stringr)
+library(jsonlite)
+library(RSQLite)
+
+library(shinyWidgets)
+library(shinycssloaders)
+library(rsconnect)
+library(shinymanager)
+library(bslib)
+library(highcharter)
 
 
 # load functions ----
-source(here("app/functions/core-functions.R"))
+source("functions/core-functions.R")
+
+# filepaths ----
+credentials_path <- "password-protect/credentials.rds"
+
+sqlite_path <- "data/nrac-db.sqlite"
 
 # parameters ----
-import_data <- ifelse(length(list.files(here("data-pack"))) == 0, TRUE, FALSE)
 
-clean_data <- ifelse(length((list.files(here("app/data/")))) == 0, TRUE, FALSE)
+password_protect <- FALSE #TRUE
 
-# import and clean data ----
-
-if(isTRUE(import_data)){
-  source(here("import-app-data.R"), local = TRUE)
+if (isTRUE(password_protect)) {
+  source("password-protect/create-credentials.R", local = TRUE)
 }
+
+navy <- "#010068"
+
+
+# import data ----
+nracdb <- dbConnect(SQLite(), sqlite_path)
+
+all_index_shares <- dbGetQuery(nracdb, 'SELECT * FROM index_shares')
+
+dbDisconnect(nracdb)
+# data_filepaths <- as.list(list.files("data", full.names = TRUE))
+#
+# names(data_filepaths) <- str_remove(list.files("data"), "\\.([^.]*)$")
+#
+# list2env(lapply(data_filepaths, readRDS), envir = .GlobalEnv)
+
+# user input lists ----
+
+# one list per page
+
+# intro page
+intro_list <- list(side_bar = c("About", "Use", "Contact", "Accessibility"))
+
+# populations
+pop_list <- list(hb_names = readRDS("lookups/hb_cypher_to_name.rds") %>%
+                   pull(hb_name))
+
+# shares and indices
+# user inputs are mapped to categorical wariables in the data
+shares_indices_list <- list(
+  stat = list(share = "Shares", index = "Indices"),
+  care_programme = list(all = "All", hchs = "Hospital and Community Health Services", gpp = "General Practice and Prescribing")
+)
+
+#end_time = timestamp()
