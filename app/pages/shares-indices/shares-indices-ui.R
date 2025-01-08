@@ -14,19 +14,24 @@ tagList(
         choices = as.character(shares_indices_list$care_programme)
       )
     ),
-    
     accordion(
-      open = c("Time Series by Component", "Percentage Change by Component"),
+      #open = c("Time Series by Component", "Percentage Change by Component"),
       accordion_panel(
-        "Time Series by Component",
-        navset_card_underline(nav_panel("Plot", 
-                                        girafeOutput("test_plot")), 
-                              nav_panel("Table"))
+        "NRAC Adjustment",
+        navset_card_underline(
+          nav_panel(machine2human$components[["as"]],
+                    girafeOutput("si_as_plot")),
+          nav_panel(machine2human$components[["mlc"]],
+                    girafeOutput("si_mlc_plot")),
+          nav_panel(machine2human$components[["xs"]], 
+                    girafeOutput("si_xs_plot"))
+        )
       ),
-      accordion_panel(
-        "Percentage Change by Component",
-        navset_card_underline(nav_panel("Plot"), nav_panel("Table"))
-      )
-    ) #accordion
-  ) #sidebar
-) #taglist
+    ),
+    accordion_panel(
+      "Percentage Change by Component",
+      navset_card_underline(nav_panel("Plot"), nav_panel("Table"))
+    )
+  ) # accordion
+) # sidebar
+# ) #taglist
