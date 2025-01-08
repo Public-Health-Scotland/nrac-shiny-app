@@ -1,6 +1,10 @@
 # these plot functions call themes from the `app/function/ggplot-themes.R`
 
-plot_shares_indices_lines <- function(data_, percentage, chart_title){
+plot_shares_indices_lines <- function(data_, component, percentage, chart_title){
+  
+  data_ <- data_ %>% 
+    filter(str_detect(name, glue("^{component}")))
+  
   p <- ggplot(data_, aes(
     x = target_year_start, 
     y = value, 
@@ -20,7 +24,8 @@ plot_shares_indices_lines <- function(data_, percentage, chart_title){
     ) +
     labs(title = chart_title, x = "Year Start", y = "Value") +
     line_chart_theme() +
-    guides(color = guide_legend(nrow = 3)) # Wrap legend
+    guides(color = guide_legend(nrow = 3)) + # Wrap legend
+    theme(legend.position = "bottom")
   
   if(isTRUE(percentage)){
     p <- p + 
