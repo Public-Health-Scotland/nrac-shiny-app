@@ -93,7 +93,7 @@ sqlite_path <- "data/nrac-db.sqlite"
 
 # parameters ----
 
-password_protect <- TRUE
+password_protect <- FALSE
 
 if (isTRUE(password_protect)) {
   source("password-protect/create-credentials.R", local = TRUE)
@@ -127,7 +127,7 @@ machine2human <- list(
 intro_list <- list(side_bar = c("About", "Use", "Contact", "Accessibility"))
 
 # populations
-pop_list <- list(hb_names = readRDS("lookups/hb_cypher_to_name.rds") %>%
+pop_list <- list(hb_names = bind_rows(fromJSON("lookups/hb_cypher_to_name.json")) %>% 
   pull(hb_name))
 
 # shares and indices
