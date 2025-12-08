@@ -3,24 +3,24 @@
 #' Import and tidy data for the app. Saves the data in the `app/data` folder.
 
 # load all packages ----
-not_on_cran <- c("phsmethods", "phsstyles")
+# not_on_cran <- c("phsmethods", "phsstyles")
 
-library(renv)
-renv::restore(exclude = not_on_cran)
-lockfile <- renv::lockfile_read()
-packages <- names(lockfile$Packages)[names(lockfile$Packages) != not_on_cran]
+# library(renv)
+# renv::restore(exclude = not_on_cran)
+# lockfile <- renv::lockfile_read()
+# packages <- names(lockfile$Packages)[names(lockfile$Packages) != not_on_cran]
 
-invisible(lapply(packages, library, character.only = TRUE))
+# invisible(lapply(packages, library, character.only = TRUE))
 
 # Public Health Scotland packages are not on CRAN, install and load separately
-for (pkg in not_on_cran) {
-  if (!requireNamespace(not_on_cran, quietly = TRUE)) {
-    remotes::install_github(glue("Public-Health-Scotland/{pkg}"))
-  }
-}
+# for (pkg in not_on_cran) {
+#   if (!requireNamespace(not_on_cran, quietly = TRUE)) {
+#     remotes::install_github(glue("Public-Health-Scotland/{pkg}"))
+#   }
+# }
 
-library(phsmethods)
-library(phsstyles)
+# library(phsmethods)
+# library(phsstyles)
 
 # parameters ----
 data_years <- jsonlite::fromJSON(txt = here("app/lookups/data-urls.json")) %>%

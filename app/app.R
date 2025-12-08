@@ -23,7 +23,9 @@ ui <- fluidPage(tagList(
     collapsible = "true",
     title = div(
       tags$a(
-        img(src = "white-logo.png", height = 40, alt = "Go to Public Health Scotland (external site)"),
+        img(src = "white-logo.png", 
+            height = 40, 
+            alt = "Go to Public Health Scotland (external site)"),
         href = "https://www.publichealthscotland.scot/",
         target = "_blank"
       ),
