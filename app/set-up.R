@@ -8,7 +8,7 @@
 #' Memory:16GB
 #' CPUs:1
 
-#start_time = timestamp()
+# start_time = timestamp()
 
 # load all packages ----
 
@@ -19,13 +19,11 @@ if (!requireNamespace("phsmethods", quietly = TRUE)) {
 
 if (!requireNamespace("phsstyles", quietly = TRUE)) {
   remotes::install_github("Public-Health-Scotland/phsstyles")
-  
 }
-
-
 
 library(janitor)
 library(here)
+library(glue)
 library(tidyr)
 library(dplyr)
 library(magrittr)
@@ -34,16 +32,59 @@ library(stringr)
 library(jsonlite)
 library(RSQLite)
 
+library(shiny)
 library(shinyWidgets)
 library(shinycssloaders)
 library(rsconnect)
 library(shinymanager)
 library(bslib)
+
 library(highcharter)
+library(ggplot2)
+library(ggtext)
+library(ggiraph)
+library(showtext)
+library(systemfonts)
+library(scales)
+library(patchwork)
+
+
+# fonts
+# font_dir <- here("app", "www", "fonts")
+
+# Register the Karla font, use systemfonts for ggiraph package
+
+if (!"Karla" %in% system_fonts()$family) {
+  systemfonts::register_font(
+    name = "Karla",
+    plain = "www/fonts/karla/Karla-Regular.ttf",
+    bold = "www/fonts/karla/Karla-Bold.ttf",
+    italic = "www/fonts/karla/Karla-Italic.ttf"
+  )
+}
+
+font_add(
+  family = "Karla",
+  regular = "www/fonts/karla/Karla-Regular.ttf",
+  bold = "www/fonts/karla/Karla-Bold.ttf",
+  italic = "www/fonts/karla/Karla-Italic.ttf"
+)
+
+font_dir <- "www/fonts/karla/"
+cat("Regular font path:", file.exists(file.path(font_dir, "Karla-Regular.ttf")), "\n")
+
+
+# render fonts
+showtext_auto()
 
 
 # load functions ----
-source("functions/core-functions.R")
+
+for (file_ in list.files("functions/", full.names = TRUE)) {
+  source(file_)
+}
+
+
 
 # filepaths ----
 credentials_path <- "password-protect/credentials.rds"
@@ -52,7 +93,7 @@ sqlite_path <- "data/nrac-db.sqlite"
 
 # parameters ----
 
-password_protect <- FALSE #TRUE
+password_protect <- FALSE
 
 if (isTRUE(password_protect)) {
   source("password-protect/create-credentials.R", local = TRUE)
@@ -64,7 +105,7 @@ navy <- "#010068"
 # import data ----
 nracdb <- dbConnect(SQLite(), sqlite_path)
 
-all_index_shares <- dbGetQuery(nracdb, 'SELECT * FROM index_shares')
+all_index_shares <- dbGetQuery(nracdb, "SELECT * FROM index_shares")
 
 dbDisconnect(nracdb)
 # data_filepaths <- as.list(list.files("data", full.names = TRUE))
@@ -74,21 +115,28 @@ dbDisconnect(nracdb)
 # list2env(lapply(data_filepaths, readRDS), envir = .GlobalEnv)
 
 # user input lists ----
-
-# one list per page
+# list of labels used in data and human-readable equivalent
+machine2human <- list(
+  components = list(pop = "Population", 
+                    as = "Age-Sex",
+                    mlc = "Multiple Life Circumstances", 
+                    xs = "Excess Costs")
+)
 
 # intro page
 intro_list <- list(side_bar = c("About", "Use", "Contact", "Accessibility"))
 
 # populations
-pop_list <- list(hb_names = readRDS("lookups/hb_cypher_to_name.rds") %>%
-                   pull(hb_name))
+pop_list <- list(hb_names = bind_rows(fromJSON("lookups/hb_cypher_to_name.json")) %>% 
+  pull(hb_name))
 
 # shares and indices
 # user inputs are mapped to categorical wariables in the data
 shares_indices_list <- list(
   stat = list(share = "Shares", index = "Indices"),
-  care_programme = list(all = "All", hchs = "Hospital and Community Health Services", gpp = "General Practice and Prescribing")
+  care_programme = list(all = "All", 
+                        hchs = "Hospital and Community Health Services",
+                        gpp = "General Practice and Prescribing")
 )
 
-#end_time = timestamp()
+# end_time = timestamp()
