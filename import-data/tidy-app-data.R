@@ -16,7 +16,7 @@
 
 start_vars <- ls()
 
-hb_lookup_path <- here("app", "lookups", "hb_cypher_to_name.rds")
+hb_lookup_path <- here("app", "lookups", "hb_cypher_to_name.json")
 sqlite_path <- here("app", "data", "nrac-db.sqlite")
 
 # read in the HB data for each financial year
@@ -26,7 +26,7 @@ datazone_hscp_files <- data_files[str_detect(str_to_lower(data_files),
                                   "resource-allocations-datazone-")]
 
 hb_sheet_name <- "Data_HB"
-notes_heet_name <- "Notes Page"
+notes_sheet_name <- "Notes Page"
 hb_data_row_index <- list(hchs = c(1:15), gpp = c(30:44), weights = c(92:93))
 
 # there are two tables one for gpp one for hchs
@@ -66,7 +66,7 @@ for(f in datazone_hscp_files){
   ) 
   
   programme_weights %<>% bind_rows(
-    read_excel_data(f, notes_heet_name, hb_data_row_index, "weights", 
+    read_excel_data(f, notes_sheet_name, hb_data_row_index, "weights", 
                     cols = c(7:14))
   )
   
@@ -89,13 +89,14 @@ index_shares_programme <- bind_rows(list(hchs = hchs_df, gpp = gpp_df),
   select(-c("population", "as_pop", "mlc_pop", "xs_pop", "scotland_pop"))
 
 # Use the programme weights to compute the indices and population shares for all care programmes
-programme_weights %<>% 
-  select(hchs_weight = overall_hchs, gpp_weight = gp_prescribing, 
-         target_year_start, target_year_end) %>% 
-  pivot_longer(cols = (ends_with("weight")), 
-               values_to = "care_programme_weight", 
-               names_to = "care_programme") %>% 
+programme_weights %<>%
+  select(hchs_weight = overall_hchs, gpp_weight = gp_prescribing,
+         target_year_start, target_year_end) %>%
+  pivot_longer(cols = (ends_with("weight")),
+               values_to = "care_programme_weight",
+               names_to = "care_programme") %>%
   mutate(care_programme = str_remove(care_programme, "_weight"))
+
 
 index_shares_all <- index_shares_programme %>% 
   left_join(programme_weights, by = c("target_year_start", "target_year_end",
@@ -113,7 +114,7 @@ index_shares_all <- index_shares_programme %>%
 
 # bind all the index and shares data and tidy it
 index_shares <- bind_rows(index_shares_all, index_shares_programme) %>% 
-  left_join(readRDS(hb_lookup_path), 
+  left_join(bind_rows(fromJSON(hb_lookup_path)), 
             by = c("hb" = "hb_cypher"))
 
 # store the the indices and shares data in a sqlite file
