@@ -29,7 +29,23 @@ shares_indices_data <- reactive({
     ) %>%
     pivot_longer(cols = ends_with(local_name)) %>%
     arrange(target_year_start) 
+  
+})
 
+output$si_table <- renderFormattable({
+  
+  table_data <- shares_indices_data() %>% 
+    filter(hb_name == input$si_table_hb_filt) %>% 
+    select(-care_programme, -hb_name) %>% 
+    pivot_wider(names_from = target_year_start, values_from = value)
+  
+  formattable(
+    # data 
+    table_data,
+    
+    # formattable arguments
+    align = c("l", rep("r", ncol(table_data) - 1)) # align label column to the left
+  ) 
 })
 
 
@@ -42,7 +58,7 @@ output$si_as_plot <- renderGirafe({
   
   # if its a share format as percentage
   is_percentage <- switch(name_(), "share" = TRUE, "index" = FALSE)
-
+  
   title_ <- glue("Line chart of the {title_component} {input$stat_in_shares} by Healthboard")
   
   plot_shares_indices_lines(shares_indices_data(),
@@ -50,7 +66,7 @@ output$si_as_plot <- renderGirafe({
                             percentage = is_percentage, 
                             chart_title = title_)
   
-
+  
   
 })
 
@@ -63,7 +79,7 @@ output$si_mlc_plot <- renderGirafe({
   
   # if its a share format as percentage
   is_percentage <- switch(name_(), "share" = TRUE, "index" = FALSE)
-
+  
   title_ <- glue("Line chart of the {title_component} {input$stat_in_shares} by Healthboard")
   
   plot_shares_indices_lines(shares_indices_data(),
@@ -82,7 +98,7 @@ output$si_xs_plot <- renderGirafe({
   
   # if its a share format as percentage
   is_percentage <- switch(name_(), "share" = TRUE, "index" = FALSE)
-
+  
   title_ <- glue("Line chart of the {title_component} {input$stat_in_shares} by Healthboard")
   
   plot_shares_indices_lines(shares_indices_data(),

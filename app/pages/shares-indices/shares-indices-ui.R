@@ -14,6 +14,10 @@ tagList(
         choices = as.character(shares_indices_list$care_programme)
       )
     ),
+    
+    selectInput("si_table_hb_filt", label = "Select a Healthboard:", choices = pop_list),
+    formattableOutput("si_table"),
+    
     accordion(
       #open = c("Time Series by Component", "Percentage Change by Component"),
       accordion_panel(

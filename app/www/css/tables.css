@@ -1,6 +1,6 @@
 /* Tables */
 
-th, td {
+/* th, td {
   border: 1px solid var(--phs-blue-30);
   padding-right: 1px;
   padding: 5px;
@@ -15,10 +15,10 @@ th {
 
 
 /* Border tables*/
-.border-table{
+/*.border-table{
   border: 1px solid var(--navy);
 
-}
+} 
 
 /* Data table page selectors */
 .pagination > li > a {

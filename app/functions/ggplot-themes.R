@@ -1,6 +1,6 @@
 # custom ggplot themes called across the app
 
-line_chart_theme <- function(base_text_size = 5) {
+line_chart_theme <- function(base_text_size = 10) {
   theme_minimal(base_size = base_text_size) +
     theme(text = element_text(family = "Karla"),
           axis.title = element_blank(),
@@ -17,12 +17,12 @@ line_chart_theme <- function(base_text_size = 5) {
           panel.grid.major.x = element_blank(),
           plot.background = element_rect(colour = "#FFFFFF",
                                          fill = "#FFFFFF"),
-          plot.margin = ggplot2::margin(10, 15, 10, 15,
-                                        unit = "points"),
+          # plot.margin = ggplot2::margin(10, 15, 10, 15,
+          #                               unit = "points"),
           #legend.position = "bottom", 
           #legend.box = "horizontal",
-          legend.text = element_text(size = rel(0.8)),
-          legend.key.size = unit(0.3, "cm"),
+          # legend.text = element_text(size = rel(0.8)),
+          # legend.key.size = unit(0.3, "cm"),
           legend.title = element_blank() # remove legend title
     )
 }
