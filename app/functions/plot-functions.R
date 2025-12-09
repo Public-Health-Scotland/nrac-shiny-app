@@ -22,10 +22,11 @@ plot_shares_indices_lines <- function(data_, component, percentage, chart_title)
       ),
       size = 1
     ) +
+    scale_color_manual_interactive(values = hb_colors)+
     labs(title = chart_title, x = "Year Start", y = "Value") +
     line_chart_theme() +
-    guides(color = guide_legend(nrow = 3)) + # Wrap legend
-    theme(legend.position = "bottom")
+    guides(color = guide_legend(nrow = 14)) + # Wrap legend
+    theme(legend.position = "right")
   
   if(isTRUE(percentage)){
     p <- p + 
@@ -35,6 +36,6 @@ plot_shares_indices_lines <- function(data_, component, percentage, chart_title)
   # Convert ggplot to interactive Girafe object
   girafe(ggobj = p, options = list(
     opts_hover(css = "stroke-width:2px;"),
-    opts_tooltip(css = "background-color:lightgray; color:black; border-radius:5px;")
+    opts_tooltip(css = "background-color:lightgray; color:black; border-radius:10px;")
   ))
 }

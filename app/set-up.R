@@ -39,7 +39,6 @@ library(rsconnect)
 library(shinymanager)
 library(bslib)
 
-library(highcharter)
 library(ggplot2)
 library(ggtext)
 library(ggiraph)
@@ -47,11 +46,11 @@ library(showtext)
 library(systemfonts)
 library(scales)
 library(patchwork)
+library(viridisLite)
+library(formattable)
 
 
-# fonts
-# font_dir <- here("app", "www", "fonts")
-
+# fonts ----
 # Register the Karla font, use systemfonts for ggiraph package
 
 if (!"Karla" %in% system_fonts()$family) {
@@ -77,6 +76,8 @@ cat("Regular font path:", file.exists(file.path(font_dir, "Karla-Regular.ttf")),
 # render fonts
 showtext_auto()
 
+# color palettes ----
+hb_colors <- c(viridis(14, option = "turbo"))
 
 # load functions ----
 
