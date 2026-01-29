@@ -1,9 +1,6 @@
 # these plot functions call themes from the `app/function/ggplot-themes.R`
 
-plot_shares_indices_lines <- function(data_, component, percentage, chart_title){
-  
-  data_ <- data_ %>% 
-    filter(str_detect(name, glue("^{component}")))
+plot_shares_indices_lines <- function(data_, percentage, chart_title){
   
   p <- ggplot(data_, aes(
     x = target_year_start, 

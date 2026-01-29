@@ -20,7 +20,6 @@ hb_lookup_path <- here("app", "lookups", "hb_cypher_to_name.json")
 sqlite_path <- here("app", "data", "nrac-db.sqlite")
 
 # read in the HB data for each financial year
-
 data_files <- list.files(here("data-pack"))
 datazone_hscp_files <- data_files[str_detect(str_to_lower(data_files), 
                                   "resource-allocations-datazone-")]
@@ -32,7 +31,6 @@ hb_data_row_index <- list(hchs = c(1:15), gpp = c(30:44), weights = c(92:93))
 # there are two tables one for gpp one for hchs
 # hchs dim A1:A15 x AA1:AA15
 # gpp dim A30:A44 x I30:I44
-# 
 
 read_excel_data <- function(file_name, sheet_name, row_index, programme, ...){
   
@@ -79,6 +77,7 @@ scotland_population <- hchs_df %>%
 
 join_cols <- c("target_year_end", "target_year_start")
 
+# indices and shares for HCHS and GPP care programmes
 index_shares_programme <- bind_rows(list(hchs = hchs_df, gpp = gpp_df),
                           .id = "care_programme") %>% 
   left_join(scotland_population, by = join_cols) %>% 
@@ -109,20 +108,33 @@ index_shares_all <- index_shares_programme %>%
            as_index = as_share/pop_share,
            mlc_index = mlc_share/as_share,
            xs_index = xs_share/mlc_share,
+           programme_index = as_index * mlc_index * xs_index,
            .groups = "drop") %>% 
   mutate(care_programme = "all")
 
 # bind all the index and shares data and tidy it
-index_shares <- bind_rows(index_shares_all, index_shares_programme) %>% 
+index_shares <- bind_rows(index_shares_all, index_shares_programme) |>
   left_join(bind_rows(fromJSON(hb_lookup_path)), 
             by = c("hb" = "hb_cypher"))
 
-# store the the indices and shares data in a sqlite file
+# split into 2 tables one for shares and one for indices
+shares <- index_shares |> 
+  select(-ends_with("index")) |> 
+  pivot_longer(ends_with("share"), names_to = "component", values_to = "share")
+
+indices <- index_shares |> 
+  select(-ends_with("share")) |> 
+  pivot_longer(ends_with("index"), names_to = "component", values_to = "nrac_index")
+
+# store the the indices and shares data in a sqlite database
 nracdb <- dbConnect(RSQLite::SQLite(), sqlite_path)
+
 dbWriteTable(nracdb, "index_shares", index_shares, overwrite = TRUE)
+dbWriteTable(nracdb, "shares", shares, overwrite = TRUE)
+dbWriteTable(nracdb, "indices", indices, overwrite = TRUE)
 
 # test query
-# dbGetQuery(nracdb, 'SELECT * FROM index_shares LIMIT 5')
+# dbGetQuery(nracdb, 'SELECT * FROM shares LIMIT 5')
 
 dbDisconnect(nracdb)
 
