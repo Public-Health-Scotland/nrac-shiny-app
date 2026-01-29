@@ -48,7 +48,6 @@ library(systemfonts)
 library(scales)
 library(patchwork)
 library(viridisLite)
-# library(formattable)
 library(reactable)
 library(reactablefmtr)
 
