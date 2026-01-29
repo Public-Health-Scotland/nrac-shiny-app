@@ -26,6 +26,7 @@ library(here)
 library(glue)
 library(tidyr)
 library(dplyr)
+library(readxl)
 library(magrittr)
 library(phsmethods)
 library(stringr)
@@ -47,8 +48,9 @@ library(systemfonts)
 library(scales)
 library(patchwork)
 library(viridisLite)
-library(formattable)
-
+# library(formattable)
+library(reactable)
+library(reactablefmtr)
 
 # fonts ----
 # Register the Karla font, use systemfonts for ggiraph package
@@ -86,7 +88,6 @@ for (file_ in list.files("functions/", full.names = TRUE)) {
 }
 
 
-
 # filepaths ----
 credentials_path <- "password-protect/credentials.rds"
 
@@ -102,42 +103,42 @@ if (isTRUE(password_protect)) {
 
 navy <- "#010068"
 
-
-# import data ----
-nracdb <- dbConnect(SQLite(), sqlite_path)
-
-all_index_shares <- dbGetQuery(nracdb, "SELECT * FROM index_shares")
-
-dbDisconnect(nracdb)
-# data_filepaths <- as.list(list.files("data", full.names = TRUE))
-#
-# names(data_filepaths) <- str_remove(list.files("data"), "\\.([^.]*)$")
-#
-# list2env(lapply(data_filepaths, readRDS), envir = .GlobalEnv)
-
 # user input lists ----
 # list of labels used in data and human-readable equivalent
 machine2human <- list(
-  components = list(pop = "Population", 
-                    as = "Age-Sex",
-                    mlc = "Multiple Life Circumstances", 
-                    xs = "Excess Costs")
+  
+  component = list(
+    pop = "Population",
+    as = "Age-Sex",
+    mlc = "Multiple Life Circumstances",
+    xs = "Excess Costs"
+  ),
+  
+  stat = list(share = "Shares", nrac_index = "Indices"),
+  
+  care_programme = list(
+    all = "All",
+    hchs = "Hospital and Community Health Services",
+    gpp = "General Practice and Prescribing"
+  )
+  
 )
 
 # intro page
 intro_list <- list(side_bar = c("About", "Use", "Contact", "Accessibility"))
 
 # populations
-pop_list <- list(hb_names = bind_rows(fromJSON("lookups/hb_cypher_to_name.json")) %>% 
+pop_list <- list(hb_names = bind_rows(fromJSON("lookups/hb_cypher_to_name.json")) %>%
   pull(hb_name))
 
 # shares and indices
-# user inputs are mapped to categorical wariables in the data
+# user inputs are mapped to categorical variables in the data
 shares_indices_list <- list(
   stat = list(share = "Shares", index = "Indices"),
-  care_programme = list(all = "All", 
-                        hchs = "Hospital and Community Health Services",
-                        gpp = "General Practice and Prescribing")
+  care_programme = list(
+    all = "All",
+    hchs = "Hospital and Community Health Services",
+    gpp = "General Practice and Prescribing"
+  )
 )
-
 # end_time = timestamp()

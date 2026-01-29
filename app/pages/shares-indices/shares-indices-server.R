@@ -1,110 +1,79 @@
-#' TODO: turn the plot into a function that takes the NRAC adjustment
-#' as an input (age sex, multiple life circumstances, excess costs) with pretty
-#' formatting and human readable labels.
-
-
-name_ <- reactive({
-  value_2_name(shares_indices_list, "stat", input$stat_in_shares)
-})
-
-# observe({
-#   cat("input$stat_in_shares:", input$stat_in_shares, "\n")
-# })
-
 shares_indices_data <- reactive({
-  # create a local value for name that is static to avoid calling the reactive
-  # several times
-  local_name <- name_()
-  all_index_shares %>%
-    select(hb_name,
-           care_programme,
-           target_year_start,
-           ends_with(local_name)) %>%
-    filter(
-      care_programme == value_2_name(
-        shares_indices_list,
-        "care_programme",
-        input$programme_in_shares
-      )
-    ) %>%
-    pivot_longer(cols = ends_with(local_name)) %>%
-    arrange(target_year_start) 
   
+  # SQL query parameters
+  stat_input <- value_2_name(machine2human, "stat", input$stat_in_shares)
+  
+  tbl_name <- tolower(input$stat_in_shares)
+  
+  programme_input <- value_2_name(machine2human, "care_programme", 
+                                  input$programme_in_shares)
+  
+  comp_input <- value_2_name(machine2human, "component", 
+                             input$component_in_shares)
+  
+  query <- sprintf("SELECT hb_name, target_year_start, %s
+                 FROM %s
+                 WHERE care_programme = '%s'
+                 AND component LIKE '%%%s%%'",
+                   stat_input, tbl_name, programme_input, comp_input)
+  
+  # extract data selected by user from the SQLite database
+  nracdb <- dbConnect(SQLite(), sqlite_path)
+  on.exit(dbDisconnect(nracdb)) # disconnect from db even if query fails
+  dbGetQuery(nracdb, query) |>
+    rename(value = stat_input)
+
 })
 
-output$si_table <- renderFormattable({
+output$si_table <- renderReactable({
   
-  table_data <- shares_indices_data() %>% 
-    filter(hb_name == input$si_table_hb_filt) %>% 
-    select(-care_programme, -hb_name) %>% 
-    pivot_wider(names_from = target_year_start, values_from = value)
+  min_year <- min(shares_indices_data()$target_year_start)
+  max_year <- max(shares_indices_data()$target_year_start)
   
-  formattable(
+  wide_tbl <- shares_indices_data() |> 
+    pivot_wider(names_from = target_year_start, values_from = value) |> 
+    select(all_of(c("hb_name", as.character(seq(min_year, max_year)))))
+  
+  # if its a share format as percentage
+  is_percentage <- switch(
+    value_2_name(shares_indices_list, "stat", input$stat_in_shares), 
+    "share" = TRUE, 
+    "index" = FALSE
+  )
+  
+  my_color_pal <- c("#9B4393", "white", "#83BB26")
+  
+  my_reactbl <- reactable(
     # data 
-    table_data,
-    
-    # formattable arguments
-    align = c("l", rep("r", ncol(table_data) - 1)) # align label column to the left
-  ) 
+    wide_tbl, 
+    defaultPageSize = 14,
+    theme = espn(),
+    defaultColDef = colDef(
+      style = color_scales(wide_tbl, colors = my_color_pal, span = TRUE), 
+      format = colFormat(percent = is_percentage, digits = 3)
+    ), 
+    columns = list(
+      hb_name = colDef(name = "Healthboard")
+    )
+  ) |> 
+    reactablefmtr::add_title(
+      glue("{input$component_in_shares} {input$stat_in_shares} by Healthboard")
+    )
+  
 })
 
-
-# charts by component
-output$si_as_plot <- renderGirafe({
-  #nrac formula component
-  component_ <- "as"
-  
-  title_component <- machine2human$components[[component_]]
+output$si_plot <- renderGirafe({
   
   # if its a share format as percentage
-  is_percentage <- switch(name_(), "share" = TRUE, "index" = FALSE)
+  is_percentage <- switch(
+    value_2_name(shares_indices_list, "stat", input$stat_in_shares), 
+    "share" = TRUE, 
+    "index" = FALSE
+    )
   
-  title_ <- glue("Line chart of the {title_component} {input$stat_in_shares} by Healthboard")
-  
+  title_ <- glue("{input$component_in_shares} {input$stat_in_shares} by Healthboard")
+
   plot_shares_indices_lines(shares_indices_data(),
-                            component = component_,
                             percentage = is_percentage, 
                             chart_title = title_)
-  
-  
-  
 })
-
-output$si_mlc_plot <- renderGirafe({
-  
-  #nrac formula component
-  component_ <- "mlc"
-  
-  title_component <- machine2human$components[[component_]]
-  
-  # if its a share format as percentage
-  is_percentage <- switch(name_(), "share" = TRUE, "index" = FALSE)
-  
-  title_ <- glue("Line chart of the {title_component} {input$stat_in_shares} by Healthboard")
-  
-  plot_shares_indices_lines(shares_indices_data(),
-                            component = component_,
-                            percentage = is_percentage, 
-                            chart_title = title_)
-  
-})
-
-output$si_xs_plot <- renderGirafe({
-  
-  #nrac formula component
-  component_ <- "xs"
-  
-  title_component <- machine2human$components[[component_]]
-  
-  # if its a share format as percentage
-  is_percentage <- switch(name_(), "share" = TRUE, "index" = FALSE)
-  
-  title_ <- glue("Line chart of the {title_component} {input$stat_in_shares} by Healthboard")
-  
-  plot_shares_indices_lines(shares_indices_data(),
-                            component = component_,
-                            percentage = is_percentage, 
-                            chart_title = title_)
-  
-})
-
