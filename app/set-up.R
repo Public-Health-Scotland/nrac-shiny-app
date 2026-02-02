@@ -82,7 +82,7 @@ hb_colors <- c(viridis(14, option = "turbo"))
 
 # load functions ----
 
-for (file_ in list.files("functions/", full.names = TRUE)) {
+for (file_ in list.files("app-functions/", full.names = TRUE)) {
   source(file_)
 }
 
