@@ -2,6 +2,12 @@
 
 plot_shares_indices_lines <- function(data_, percentage, chart_title){
   
+  if(isTRUE(percentage)){
+    round_val <- 2
+  } else {
+    round_val <- 3
+  }
+  
   p <- ggplot(data_, aes(
     x = target_year_start, 
     y = value, 
@@ -14,7 +20,7 @@ plot_shares_indices_lines <- function(data_, percentage, chart_title){
       aes(
         tooltip = paste0("Healthboard: ", hb_name, "\nYear: ", 
                          target_year_start, "\nValue: ", 
-                         format_val(value, percent_fmt = percentage, 2)), # Tooltip for points
+                         format_val(value, percent_fmt = percentage, round_val)), # Tooltip for points
         data_id = paste0(hb_name, "-", target_year_start)
       ),
       size = 1
