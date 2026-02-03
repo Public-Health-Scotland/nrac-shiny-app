@@ -1,9 +1,11 @@
+# shares and indices data ----
 shares_indices_data <- reactive({
   
   # SQL query parameters
   stat_input <- value_2_name(machine2human, "stat", input$stat_in_shares)
   
-  tbl_name <- tolower(input$stat_in_shares)
+  # tbl_name <- tolower(input$stat_in_shares)
+  tbl_name <- glue("{tolower(input$stat_in_shares)}_with_differences")
   
   programme_input <- value_2_name(machine2human, "care_programme", 
                                   input$programme_in_shares)
@@ -11,7 +13,7 @@ shares_indices_data <- reactive({
   comp_input <- value_2_name(machine2human, "component", 
                              input$component_in_shares)
   
-  query <- sprintf("SELECT hb_name, target_year_start, %s
+  query <- sprintf("SELECT hb_name, target_year_start, %s, diff
                  FROM %s
                  WHERE care_programme = '%s'
                  AND component LIKE '%%%s%%'",
@@ -25,14 +27,8 @@ shares_indices_data <- reactive({
 
 })
 
-output$si_table <- renderReactable({
-  
-  min_year <- min(shares_indices_data()$target_year_start)
-  max_year <- max(shares_indices_data()$target_year_start)
-  
-  wide_tbl <- shares_indices_data() |> 
-    pivot_wider(names_from = target_year_start, values_from = value) |> 
-    select(all_of(c("hb_name", as.character(seq(min_year, max_year)))))
+# shares & indices plot ----
+output$si_plot <- renderGirafe({
   
   # if its a share format as percentage
   is_percentage <- switch(
@@ -41,39 +37,70 @@ output$si_table <- renderReactable({
     "index" = FALSE
   )
   
-  my_color_pal <- c("#9B4393", "white", "#83BB26")
+  title_ <- glue("{input$component_in_shares} {input$stat_in_shares} by Healthboard")
   
-  my_reactbl <- reactable(
-    # data 
-    wide_tbl, 
-    defaultPageSize = 14,
-    theme = espn(),
-    defaultColDef = colDef(
-      style = color_scales(wide_tbl, colors = my_color_pal, span = TRUE), 
-      format = colFormat(percent = is_percentage, digits = 3)
-    ), 
-    columns = list(
-      hb_name = colDef(name = "Healthboard")
-    )
-  ) |> 
-    reactablefmtr::add_title(
-      glue("{input$component_in_shares} {input$stat_in_shares} by Healthboard")
-    )
-  
+  plot_shares_indices_lines(shares_indices_data(),
+                            percentage = is_percentage, 
+                            chart_title = title_)
 })
 
-output$si_plot <- renderGirafe({
+
+# shares and indices difference to base year
+output$si_plot_diff <- renderGirafe({
+  
+  diff_data <- shares_indices_data() |> 
+    select(-value) |> 
+    rename(value = diff)
+  
+  min_year <- min(diff_data$target_year_start)
   
   # if its a share format as percentage
   is_percentage <- switch(
     value_2_name(shares_indices_list, "stat", input$stat_in_shares), 
     "share" = TRUE, 
     "index" = FALSE
-    )
+  )
   
-  title_ <- glue("{input$component_in_shares} {input$stat_in_shares} by Healthboard")
-
-  plot_shares_indices_lines(shares_indices_data(),
+  title_ <- glue("Difference in {input$stat_in_shares} since {min_year} by Healthboard")
+  
+  plot_shares_indices_lines(diff_data,
                             percentage = is_percentage, 
                             chart_title = title_)
+  
+})
+
+# shares & indices table ----
+output$si_table <- renderReactable({
+  
+  title_ <- glue("{input$stat_in_shares} by Healthboard")
+  
+  # if its a share format as percentage
+  is_percentage <- switch(
+    value_2_name(shares_indices_list, "stat", input$stat_in_shares), 
+    "share" = TRUE, 
+    "index" = FALSE
+  )
+
+  build_shares_indices_tbl(shares_indices_data(), title_, "value", is_percentage)
+  
+  
+})
+
+# difference in shares and indices table ----
+output$si_table_diff <- renderReactable({
+  
+  min_year <- min(shares_indices_data()$target_year_start)
+  
+  title_ <- glue("Difference in {input$stat_in_shares} since {min_year} by Healthboard")
+  
+  # if its a share format as percentage
+  is_percentage <- switch(
+    value_2_name(shares_indices_list, "stat", input$stat_in_shares), 
+    "share" = TRUE, 
+    "index" = FALSE
+  )
+  
+  build_shares_indices_tbl(shares_indices_data(), title_, "diff", is_percentage)
+
+  
 })

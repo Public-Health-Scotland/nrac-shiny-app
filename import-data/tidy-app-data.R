@@ -16,6 +16,8 @@
 
 start_vars <- ls()
 
+source(here::here("functions.R"), local = TRUE)
+
 hb_lookup_path <- here("app", "lookups", "hb_cypher_to_name.json")
 sqlite_path <- here("app", "data", "nrac-db.sqlite")
 
@@ -31,18 +33,6 @@ hb_data_row_index <- list(hchs = c(1:15), gpp = c(30:44), weights = c(92:93))
 # there are two tables one for gpp one for hchs
 # hchs dim A1:A15 x AA1:AA15
 # gpp dim A30:A44 x I30:I44
-
-read_excel_data <- function(file_name, sheet_name, row_index, programme, ...){
-  
-    openxlsx::read.xlsx(here("data-pack", file_name), sheet = sheet_name, 
-                        rows = row_index[[programme]], ...) %>% 
-    mutate(target_year_end = 
-             2000 + as.numeric(str_extract(file_name, "(\\d{2})(?=\\D*$)"))) %>% 
-    mutate(target_year_start = target_year_end - 1) %>% 
-    clean_names()
-
-}
-
 
 hchs_df <- tibble()
 gpp_df <- tibble()
@@ -73,7 +63,7 @@ for(f in datazone_hscp_files){
 # Get the Scotland total population per year so that we can calculate the population shares for HCHS and GPP
 scotland_population <- hchs_df %>% 
   group_by(target_year_end, target_year_start) %>% 
-  summarise(scotland_pop = sum(population))
+  summarise(scotland_pop = sum(population), .groups = "drop")
 
 join_cols <- c("target_year_end", "target_year_start")
 
@@ -126,10 +116,12 @@ indices <- index_shares |>
   select(-ends_with("share")) |> 
   pivot_longer(ends_with("index"), names_to = "component", values_to = "nrac_index")
 
+# write app data to SQLite database ----
+
 # store the the indices and shares data in a sqlite database
 nracdb <- dbConnect(RSQLite::SQLite(), sqlite_path)
 
-dbWriteTable(nracdb, "index_shares", index_shares, overwrite = TRUE)
+# dbWriteTable(nracdb, "index_shares", index_shares, overwrite = TRUE)
 dbWriteTable(nracdb, "shares", shares, overwrite = TRUE)
 dbWriteTable(nracdb, "indices", indices, overwrite = TRUE)
 
@@ -137,6 +129,12 @@ dbWriteTable(nracdb, "indices", indices, overwrite = TRUE)
 # dbGetQuery(nracdb, 'SELECT * FROM shares LIMIT 5')
 
 dbDisconnect(nracdb)
+
+# Create 2 views for the absolute difference in shares and index respectively.
+# Subtract the share/index for each year from the share/index at the start of the time series.
+# This allows us to see how each share/index has decreased/increased since the start of the trend.
+create_diff_view(sqlite_path, table_name = "shares", var_name = "share")
+create_diff_view(sqlite_path, table_name = "indices", var_name = "nrac_index")
 
 # clean environment ----
 rm(list = setdiff(ls(), start_vars))

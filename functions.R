@@ -1,3 +1,37 @@
+#' read_excel_data
+#'
+#' @param file_name name of the Excel file to read
+#' @param sheet_name name of the sheet which contains the data
+#' @param row_index list of the start rows and end rows for each NRAC programme
+#' @param programme name of the NRAC programme to pull data from
+#' @param ... 
+#'
+#' @returns reads in NRAC data published in Excel format
+#' @export
+#'
+#' @examples
+read_excel_data <- function(file_name, sheet_name, row_index, programme, ...){
+  
+  openxlsx::read.xlsx(here("data-pack", file_name), sheet = sheet_name, 
+                      rows = row_index[[programme]], ...) %>% 
+    mutate(target_year_end = 
+             2000 + as.numeric(str_extract(file_name, "(\\d{2})(?=\\D*$)"))) %>% 
+    mutate(target_year_start = target_year_end - 1) %>% 
+    clean_names()
+  
+}
+
+
+
+#' create_diff_view
+#'
+#' @param my_conn_path SQL connection
+#' @param table_name Name of the view with the shares/indices data
+#' @param var_name Name of the share/indices variable
+#'
+#' @returns creates a view of the absolute difference in shares/indices since the earliest year
+#' @export
+#'
 create_diff_view <- function(my_conn_path, table_name = "shares", var_name = "share"){
   
   my_conn <- dbConnect(SQLite(), my_conn_path)
@@ -34,6 +68,7 @@ create_diff_view <- function(my_conn_path, table_name = "shares", var_name = "sh
   dbExecute(my_conn, query)
 }
 
+#' @examples
 # create_diff_view("app/data/nrac-db.sqlite")
 # create_diff_view("app/data/nrac-db.sqlite",
 #                  table_name = "indices",
