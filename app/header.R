@@ -2,7 +2,7 @@
 
 tags$head(# css scripts
           includeCSS("www/css/main.css"),  # Main
-          includeCSS("www/css/tables.css"),  # tables
+          # includeCSS("www/css/tables.css"),  # tables
           includeCSS("www/css/navbar_and_panels.css"), # navbar and notes panel
           includeCSS("www/css/buttons.css"), # buttons
           includeCSS("www/css/select.css"), # selectors and radio buttons

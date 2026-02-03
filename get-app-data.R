@@ -3,24 +3,14 @@
 #' Import and tidy data for the app. Saves the data in the `app/data` folder.
 
 # load all packages ----
-# not_on_cran <- c("phsmethods", "phsstyles")
-
-# library(renv)
-# renv::restore(exclude = not_on_cran)
-# lockfile <- renv::lockfile_read()
-# packages <- names(lockfile$Packages)[names(lockfile$Packages) != not_on_cran]
-
-# invisible(lapply(packages, library, character.only = TRUE))
-
-# Public Health Scotland packages are not on CRAN, install and load separately
-# for (pkg in not_on_cran) {
-#   if (!requireNamespace(not_on_cran, quietly = TRUE)) {
-#     remotes::install_github(glue("Public-Health-Scotland/{pkg}"))
-#   }
-# }
-
-# library(phsmethods)
-# library(phsstyles)
+library(here)
+library(tidyverse)
+library(glue)
+library(magrittr)
+library(janitor)
+library(jsonlite)
+library(DBI)
+library(RSQLite)
 
 # parameters ----
 data_years <- jsonlite::fromJSON(txt = here("app/lookups/data-urls.json")) %>%
@@ -36,8 +26,7 @@ if (!("data-pack" %in% list.dirs(here(), full.names = FALSE, recursive = FALSE))
   dir.create(here("data-pack"))
 }
 
-# import and clean data ----
-
+# import data ----
 for (i in 1:nrow(data_years)) {
   data_years_row <- data_years %>% slice(i)
   
@@ -50,7 +39,7 @@ for (i in 1:nrow(data_years)) {
   
 }
 
-
+# tidy data and save it in a sqlite database ----
 source(here("import-data", "tidy-app-data.R"), local = TRUE)
 
 # clean environment ----

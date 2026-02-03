@@ -20,15 +20,30 @@ tagList(
         choices = as.character(machine2human$component)
       )
     ),
-
+    
     accordion(
       accordion_panel(
         "", 
         
-        navset_card_pill(
-          nav_panel("Plot", girafeOutput("si_plot")), 
-          nav_panel("Table", reactableOutput("si_table"))
-        )
+        navset_tab(
+          
+          nav_panel("Crude Figures",
+                    br(),
+                    navset_underline(
+                      nav_panel("Plot", girafeOutput("si_plot")), 
+                      nav_panel("Table", reactableOutput("si_table"))
+                    )
+          ), 
+          
+          nav_panel("Absolute Difference",
+                    br(), 
+                    navset_underline(
+                      nav_panel("Plot", girafeOutput("si_plot_diff")),
+                      nav_panel("Table", reactableOutput("si_table_diff"))  
+                    )
+          )
+          
+        ) # navset_card
         
       )
     ) # accordion
