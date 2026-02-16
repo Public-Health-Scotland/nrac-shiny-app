@@ -3,10 +3,11 @@
 ########################################
 
 # Source this file to deploy the app
+library(dplyr)
 
-app_loc <- here("app")
+app_loc <- here::here("app")
 
-app_name <- "populations-and-budget-predictions"
+app_name <- "phs-nrac"
 
 # Get deployment functions
 source("app/deploy-app/deployment-functions.R")
