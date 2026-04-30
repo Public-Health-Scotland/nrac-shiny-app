@@ -2,7 +2,7 @@ tagList(
   titlePanel("Shares and Indices"),
   
   layout_sidebar(
-    title = "Population by Healthboard",
+    # title = "Population by Healthboard",
     sidebar = sidebar(
       radioButtons(
         "stat_in_shares",
@@ -21,8 +21,8 @@ tagList(
       )
     ),
     
-    accordion(
-      accordion_panel(
+    # accordion(
+      nav_panel(
         "", 
         
         navset_tab(
@@ -46,7 +46,7 @@ tagList(
         ) # navset_card
         
       )
-    ) # accordion
+    # ) # accordion
     
   ) # layout_sidebar
 ) # taglist 
