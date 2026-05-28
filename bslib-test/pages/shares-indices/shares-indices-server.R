@@ -17,25 +17,28 @@ shares_indices_data <- reactive({
   
   comp_input <- value_2_name(machine2human, "component", 
                              input$component_in_shares)
+  hb_input <- paste0("('", 
+                     paste0(input$hb_in_shares, collapse = "' , '"), 
+                     "')")
   
   query <- sprintf("SELECT hb_name, target_year_start, %s, diff
                  FROM %s
                  WHERE care_programme = '%s'
-                 AND component LIKE '%%%s%%'",
-                   stat_input, tbl_name, programme_input, comp_input)
-  
+                 AND component LIKE '%%%s%%'
+                 AND hb_name IN %s",
+                   stat_input, tbl_name, programme_input, comp_input, hb_input)
+
   # extract data selected by user from the SQLite database
   nracdb <- dbConnect(SQLite(), sqlite_path)
   on.exit(dbDisconnect(nracdb)) # disconnect from db even if query fails
   dbGetQuery(nracdb, query) |>
     rename(value = stat_input) |> 
     arrange(hb_name)
-  
 })
 
 # shares & indices plot ----
 output$si_plot <- renderGirafe({
-  
+
   # if its a share format as percentage
   is_percentage <- switch(
     value_2_name(shares_indices_list, "stat", input$stat_in_shares), 

@@ -116,8 +116,11 @@ machine2human <- list(
 intro_list <- list(side_bar = c("About", "Use", "Contact", "Accessibility"))
 
 # populations
-pop_list <- list(hb_names = bind_rows(fromJSON("lookups/hb_cypher_to_name.json")) %>%
-  pull(hb_name))
+pop_list <- list(hb_names = 
+                   bind_rows(fromJSON("lookups/hb_cypher_to_name.json")) |> 
+                   arrange(hb_name) |> 
+                   pull(hb_name)
+  )
 
 # shares and indices
 # user inputs are mapped to categorical variables in the data

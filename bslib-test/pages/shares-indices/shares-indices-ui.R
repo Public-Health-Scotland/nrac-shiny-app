@@ -15,6 +15,13 @@ layout_sidebar(
       "component_in_shares", 
       "Choose a Component:", 
       choices = as.character(machine2human$component)
+    ), 
+    selectizeInput(
+      "hb_in_shares", 
+      "Choose Healthboards:", 
+      choices = pop_list$hb_names, 
+      multiple = TRUE, 
+      selected = pop_list$hb_names
     )
   ), # sidebar
   
