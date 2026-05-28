@@ -12,7 +12,7 @@
 #' for all care programmes. Binds everything together and writes output to a 
 #' SQLite database.
 #'
-# tidy data for the app ----
+# set-up----
 
 start_vars <- ls()
 
@@ -21,6 +21,7 @@ source(here::here("functions.R"), local = TRUE)
 hb_lookup_path <- here("app", "lookups", "hb_cypher_to_name.json")
 sqlite_path <- here("app", "data", "nrac-db.sqlite")
 
+# shares-indices data ----
 # read in the HB data for each financial year
 data_files <- list.files(here("data-pack"))
 datazone_hscp_files <- data_files[str_detect(str_to_lower(data_files), 
