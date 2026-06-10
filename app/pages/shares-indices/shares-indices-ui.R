@@ -30,7 +30,7 @@ layout_sidebar(
     nav_panel("Crude Figures",
               br(),
               navset_underline(
-                nav_panel("Plot", girafeOutput("si_plot")), 
+                nav_panel("Plot", girafeOutput("si_plot", width = "90%")), 
                 nav_panel("Table", reactableOutput("si_table"))
               )
     ), # nav_panel
@@ -38,7 +38,7 @@ layout_sidebar(
     nav_panel("Absolute Difference",
               br(), 
               navset_underline(
-                nav_panel("Plot", girafeOutput("si_plot_diff")),
+                nav_panel("Plot", girafeOutput("si_plot_diff", width = "90%")),
                 nav_panel("Table", reactableOutput("si_table_diff"))  
               )
     ) # nav_panel
