@@ -11,16 +11,6 @@
 # start_time = timestamp()
 
 # load all packages ----
-
-# Public Health Scotland package are not on CRAN, install
-if (!requireNamespace("phsmethods", quietly = TRUE)) {
-  remotes::install_github("Public-Health-Scotland/phsmethods")
-}
-
-if (!requireNamespace("phsstyles", quietly = TRUE)) {
-  remotes::install_github("Public-Health-Scotland/phsstyles")
-}
-
 library(janitor)
 library(here)
 library(glue)
@@ -28,7 +18,6 @@ library(tidyr)
 library(dplyr)
 library(readxl)
 library(magrittr)
-library(phsmethods)
 library(stringr)
 library(jsonlite)
 library(RSQLite)
@@ -127,8 +116,11 @@ machine2human <- list(
 intro_list <- list(side_bar = c("About", "Use", "Contact", "Accessibility"))
 
 # populations
-pop_list <- list(hb_names = bind_rows(fromJSON("lookups/hb_cypher_to_name.json")) %>%
-  pull(hb_name))
+pop_list <- list(hb_names = 
+                   bind_rows(fromJSON("lookups/hb_cypher_to_name.json")) |> 
+                   arrange(hb_name) |> 
+                   pull(hb_name)
+  )
 
 # shares and indices
 # user inputs are mapped to categorical variables in the data
