@@ -10,6 +10,8 @@
 #' 
 #' imports several years of data from the NRAC PHS publications and saves all 
 #' the outputs in `data-pack/`
+#' @param start_year must be defined before sourcing this script
+#' @param end_year must be defined before sourcing this script
 #'
 # import data from Public Health Scotland ----
 

@@ -1,9 +1,15 @@
-build_shares_indices_tbl <- function(my_data, my_title, column_name, is_percentage_val){
+
+build_empty_tbl <- function(my_data, my_msg){
+  reactable(my_data, language = reactableLang(noData = my_msg))
+}
+
+
+build_shares_indices_tbl <- function(data, my_title, column_name, is_percentage_val){
   
-  min_year <- min(my_data[,"target_year_start"])
-  max_year <- max(my_data[,"target_year_start"])
+  min_year <- min(data[,"target_year_start"])
+  max_year <- max(data[,"target_year_start"])
   
-  wide_tbl <- my_data |> 
+  wide_tbl <- data |> 
     select(all_of(c("hb_name", "target_year_start", column_name))) |> 
     pivot_wider(names_from = target_year_start, values_from = column_name) |> 
     select(all_of(c("hb_name", as.character(seq(min_year, max_year)))))

@@ -1,5 +1,18 @@
 # these plot functions call themes from the `app/function/ggplot-themes.R`
 
+# use when user selects an empty dataset
+plot_empty_with_text <- function(my_text){
+  no_data_plot <- ggplot() +
+    annotate("text", x = 10,  y = 10,
+             size = 4,
+             label = str_wrap(my_text)
+    )+
+    theme_void()
+  
+  girafe(ggobj = no_data_plot)
+}
+
+
 plot_shares_indices_lines <- function(data_, percentage, chart_title){
   
   if(isTRUE(percentage)){

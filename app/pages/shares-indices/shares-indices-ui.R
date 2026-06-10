@@ -1,52 +1,50 @@
-tagList(
-  titlePanel("Shares and Indices"),
+layout_sidebar(
   
-  layout_sidebar(
-    # title = "Population by Healthboard",
-    sidebar = sidebar(
-      radioButtons(
-        "stat_in_shares",
-        "Chose a statistic:",
-        choices = as.character(machine2human$stat)
-      ),
-      radioButtons(
-        "programme_in_shares",
-        "Chose a Care Programme:",
-        choices = as.character(machine2human$care_programme)
-      ), 
-      radioButtons(
-        "component_in_shares", 
-        "Choose a Component:", 
-        choices = as.character(machine2human$component)
-      )
+  sidebar = sidebar(
+    radioButtons(
+      "stat_in_shares",
+      "Chose a statistic:",
+      choices = as.character(machine2human$stat)
     ),
+    radioButtons(
+      "programme_in_shares",
+      "Chose a Care Programme:",
+      choices = as.character(machine2human$care_programme)
+    ), 
+    radioButtons(
+      "component_in_shares", 
+      "Choose a Component:", 
+      choices = as.character(machine2human$component)
+    ), 
+    selectizeInput(
+      "hb_in_shares", 
+      "Choose Healthboards:", 
+      choices = pop_list$hb_names, 
+      multiple = TRUE, 
+      selected = pop_list$hb_names
+    )
+  ), # sidebar
+  
+  navset_tab(
     
-    # accordion(
-      nav_panel(
-        "", 
-        
-        navset_tab(
-          
-          nav_panel("Crude Figures",
-                    br(),
-                    navset_underline(
-                      nav_panel("Plot", girafeOutput("si_plot")), 
-                      nav_panel("Table", reactableOutput("si_table"))
-                    )
-          ), 
-          
-          nav_panel("Absolute Difference",
-                    br(), 
-                    navset_underline(
-                      nav_panel("Plot", girafeOutput("si_plot_diff")),
-                      nav_panel("Table", reactableOutput("si_table_diff"))  
-                    )
-          )
-          
-        ) # navset_card
-        
-      )
-    # ) # accordion
+    nav_panel("Crude Figures",
+              br(),
+              navset_underline(
+                nav_panel("Plot", girafeOutput("si_plot")), 
+                nav_panel("Table", reactableOutput("si_table"))
+              )
+    ), # nav_panel
     
-  ) # layout_sidebar
-) # taglist 
+    nav_panel("Absolute Difference",
+              br(), 
+              navset_underline(
+                nav_panel("Plot", girafeOutput("si_plot_diff")),
+                nav_panel("Table", reactableOutput("si_table_diff"))  
+              )
+    ) # nav_panel
+    
+  ) # navset_tab
+  
+) # layout_sidebar
+  
+  
