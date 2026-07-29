@@ -17,20 +17,35 @@ source("set-up.R")
 # ui ----------------------------------------------------------------------
 
 ui <- page_navbar(
+  
   title = "NRAC Dashboard", 
+  
   nav_panel("Shares and Indices",
             source(
               file.path("pages/shares-indices/shares-indices-ui.R"),
               local = TRUE
             )$value
-            )
+            ),
+  
+  nav_panel("Marginal Change",
+            source(
+              file.path("pages/marginal-change/marginal-change-ui.R"),
+              local = TRUE
+            )$value
+  )
+  
 )
 
 # server ------------------------------------------------------------------
 
 server <- function(input, output, session){
+  
   source(file.path("pages/shares-indices/shares-indices-server.R"),
          local = TRUE)$value
+  
+  source(file.path("pages/marginal-change/marginal-change-server.R"),
+         local = TRUE)$value
+  
 }
 
 # run the app -------------------------------------------------------------
