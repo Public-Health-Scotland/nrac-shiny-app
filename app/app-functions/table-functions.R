@@ -25,7 +25,7 @@ build_shares_indices_tbl <- function(data, my_title, column_name, is_percentage_
     defaultPageSize = 14,
     theme = espn(font_size = 16, header_font_size = 18),
     # style = list(fontSize = "1.875rem"),
-    highlight = TRUE, # higlight row on hover
+    highlight = TRUE, # highlight row on hover
     defaultColDef = colDef(
       # style = color_scales(wide_tbl, colors = my_color_pal, span = TRUE, highlight = TRUE), 
       format = colFormat(percent = is_percentage_val, digits = digits2round)
