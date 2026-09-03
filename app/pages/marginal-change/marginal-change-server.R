@@ -5,7 +5,7 @@
 marginal_change <- reactive({
   
   # SQL query parameters
-  tbl_name <- "index_shares"
+  tbl_name <- "marginal_changes"
   
   programme_input <- value_2_name(machine2human, "care_programme", 
                                   input$programme_in_mc)
@@ -23,44 +23,11 @@ marginal_change <- reactive({
   # extract data selected by user from the SQLite database
   nracdb <- dbConnect(SQLite(), sqlite_path)
   on.exit(dbDisconnect(nracdb)) # disconnect from db even if query fails
-  smr_extract <- dbGetQuery(nracdb, query) |>
+  
+  dbGetQuery(nracdb, query) |>
     arrange(hb_name) |> 
-    select(-hb)
-  
-  # to calculate the marginal change we need the two ends of the time series
-  head_1 <- smr_extract |> 
-    filter(target_year_start != max(target_year_start))
-  
-  tail_1 <- smr_extract |> 
-    filter(target_year_start != min(target_year_start))
-  
-  # get year on year marginal changes
-  # the tables are joined so that 2 subsequent years are on the same row
-  full_join(head_1, tail_1, 
-            by = c("hb_name", "target_year_end" = "target_year_start"), 
-            suffix = c("_head", "_tail")) |> 
-    mutate(
-      # starting population share
-      change_0 = pop_share_head * programme_index_head,
-      
-      # share after population change
-      change_1 = programme_index_head * pop_share_tail,
-      
-      # share after age-sex adjustment
-      change_2 = change_1 / as_index_head * as_index_tail, 
-      
-      # after MLC adjustment
-      change_3 = change_2 / mlc_index_head * mlc_index_tail,
-      
-      # after Excess Costs adjustment
-      change_4 = change_3 / xs_index_head * xs_index_tail, 
-      
-      # add year label
-      year_label = glue("{target_year_start %% 2000}/{target_year_end %% 2000}", 
-                        " to {target_year_end_tail %% 2000 - 1}/{target_year_end_tail %% 2000}")
-    ) |> 
-    select(hb_name, year_label, change_0, change_1, change_2, change_3, change_4)
-  
+    select(-care_programme)
+
 })
 
 
@@ -84,7 +51,6 @@ output$mc_table <- renderReactable({
                hb_name = colDef(name = "Healthboard")
              )
   )
-    # browser()     
     
     
 })

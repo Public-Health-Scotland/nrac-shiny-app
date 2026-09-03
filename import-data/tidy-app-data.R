@@ -117,20 +117,66 @@ indices <- index_shares |>
   select(-ends_with("share")) |> 
   pivot_longer(ends_with("index"), names_to = "component", values_to = "nrac_index")
 
+
+# marginal-changes-data ----
+# to calculate the marginal change we need the two ends of the time series
+head_1 <- index_shares |> 
+  filter(target_year_start != max(index_shares$target_year_start)) |> 
+  select(-hb)
+
+tail_1 <- index_shares |> 
+  filter(target_year_start != min(index_shares$target_year_start)) |> 
+  select(-hb)
+
+# get year on year marginal changes
+# the tables are joined so that 2 subsequent years are on the same row
+marginal_changes <- full_join(head_1, tail_1, 
+          by = c("hb_name", "target_year_end" = "target_year_start", "care_programme"), 
+          suffix = c("_head", "_tail")) |> 
+  mutate(
+    # starting population share
+    change_0 = pop_share_head * programme_index_head,
+    
+    # share after population change
+    change_1 = programme_index_head * pop_share_tail,
+    
+    # share after age-sex adjustment
+    change_2 = change_1 / as_index_head * as_index_tail, 
+    
+    # after MLC adjustment
+    change_3 = change_2 / mlc_index_head * mlc_index_tail,
+    
+    # after Excess Costs adjustment
+    change_4 = change_3 / xs_index_head * xs_index_tail, 
+    
+    # add year label
+    year_label = glue("{target_year_start %% 2000}/{target_year_end %% 2000}", 
+                      " to {target_year_end_tail %% 2000 - 1}/{target_year_end_tail %% 2000}")
+  ) |> 
+  select(care_programme, hb_name, year_label, change_0, change_1, change_2, change_3, change_4) |> 
+  arrange(care_programme, hb_name, year_label)
+
+
+
 # write app data to SQLite database ----
 
 # store the the indices and shares data in a sqlite database
 nracdb <- dbConnect(RSQLite::SQLite(), sqlite_path)
 
-# dbWriteTable(nracdb, "index_shares", index_shares, overwrite = TRUE)
+## shares and indices ----
+dbWriteTable(nracdb, "index_shares", index_shares, overwrite = TRUE)
 dbWriteTable(nracdb, "shares", shares, overwrite = TRUE)
 dbWriteTable(nracdb, "indices", indices, overwrite = TRUE)
+
+## marginal change ----
+dbWriteTable(nracdb, "marginal_changes", marginal_changes, overwrite = TRUE)
 
 # test query
 # dbGetQuery(nracdb, 'SELECT * FROM shares LIMIT 5')
 
 dbDisconnect(nracdb)
 
+## absolute difference ----
 # Create 2 views for the absolute difference in shares and index respectively.
 # Subtract the share/index for each year from the share/index at the start of the time series.
 # This allows us to see how each share/index has decreased/increased since the start of the trend.
