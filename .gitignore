@@ -64,8 +64,8 @@ dev/
 *.uuid
 
 # credentials
-app/password-protect/create-credentials.R
-# app/deploy-app/deployment-secrets.R
+create-credentials.R
+deployment-secrets.R
 
 # exceptions
 !data-urls.json
