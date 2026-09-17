@@ -129,7 +129,7 @@ shares_indices_list <- list(
   care_programme = list(
     all = "All",
     hchs = "Hospital and Community Health Services",
-    gpp = "General Practice and Prescribing"
+    gpp = "GP Prescribing"
   )
 )
 # end_time = timestamp()

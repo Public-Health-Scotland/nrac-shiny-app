@@ -39,9 +39,12 @@ shares_indices_data <- reactive({
 # shares & indices plot ----
 output$si_plot <- renderGirafe({
 
+  my_stat_label <- str_to_title(
+    value_2_name(shares_indices_list, "stat", input$stat_in_shares)
+  )  
   # if its a share format as percentage
   is_percentage <- switch(
-    value_2_name(shares_indices_list, "stat", input$stat_in_shares), 
+    my_stat_label, 
     "share" = TRUE, 
     "index" = FALSE
   )
@@ -51,6 +54,7 @@ output$si_plot <- renderGirafe({
     title_ <- glue("{input$component_in_shares} {input$stat_in_shares} by Healthboard")
     
     plot_shares_indices_lines(shares_indices_data(),
+                              stat_label = my_stat_label,
                               percentage = is_percentage, 
                               chart_title = title_)
     
@@ -67,9 +71,7 @@ output$si_plot <- renderGirafe({
 # difference plot ----
 output$si_plot_diff <- renderGirafe({
   
-  diff_data <- shares_indices_data() |> 
-    select(-value) |> 
-    rename(value = diff)
+  diff_data <- shares_indices_data()
   
   if(nrow(diff_data) > 0){
     
@@ -77,18 +79,30 @@ output$si_plot_diff <- renderGirafe({
     
   }
   
+  #remove the first year since difference is 0
+  diff_data <- diff_data |> 
+    filter(target_year_start != min_year) |> 
+    select(-value) |> 
+    rename(value = diff)
+  
+  my_stat_label <- str_to_title(
+    value_2_name(shares_indices_list, "stat", input$stat_in_shares)
+    )
+  
   # if its a share format as percentage
   is_percentage <- switch(
-    value_2_name(shares_indices_list, "stat", input$stat_in_shares), 
+    my_stat_label, 
     "share" = TRUE, 
     "index" = FALSE
   )
 
   if(nrow(diff_data) > 0){
     
-    title_ <- glue("Difference in {input$stat_in_shares} since {min_year} by Healthboard")
+    title_ <- glue("Difference in {input$stat_in_shares} since {min_year}/{(min_year +1) %% 100} by Healthboard")
     
     plot_shares_indices_lines(diff_data,
+                              stat_label = my_stat_label,
+                              is_diff = TRUE,
                               percentage = is_percentage, 
                               chart_title = title_)
     
@@ -115,7 +129,7 @@ output$si_table <- renderReactable({
   
   if(nrow(shares_indices_data()) > 0){
     
-    build_shares_indices_tbl(shares_indices_data(), title_, "value", is_percentage)
+    build_pretty_tbl(shares_indices_data(), title_, "value", is_percentage)
     
   } else {
     
@@ -130,7 +144,7 @@ output$si_table_diff <- renderReactable({
   
   min_year <- min(shares_indices_data()$target_year_start)
   
-  title_ <- glue("Difference in {input$stat_in_shares} since {min_year} by Healthboard")
+  title_ <- glue("Difference in {input$stat_in_shares} since {min_year}/{(min_year +1) %% 100} by Healthboard")
   
   # if its a share format as percentage
   is_percentage <- switch(
@@ -141,7 +155,7 @@ output$si_table_diff <- renderReactable({
   
   if(nrow(shares_indices_data()) > 0){
     
-    build_shares_indices_tbl(shares_indices_data(), title_, "diff", is_percentage)
+    build_pretty_tbl(shares_indices_data(), title_, "diff", is_percentage)
     
   } else {
     

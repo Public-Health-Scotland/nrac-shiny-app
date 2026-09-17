@@ -4,18 +4,24 @@ build_empty_tbl <- function(my_data, my_msg){
 }
 
 
-build_shares_indices_tbl <- function(data, my_title, column_name, is_percentage_val){
+build_pretty_tbl <- function(my_data, my_title, column_name, is_percentage_val){
   
-  min_year <- min(data[,"target_year_start"])
-  max_year <- max(data[,"target_year_start"])
+  min_year <- min(my_data[,"target_year_start"])
+  # max_year <- max(my_data[,"target_year_start"])
   
-  wide_tbl <- data |> 
+  # if creating a percentage difference table remove the first year since difference is 0
+  if(column_name == "diff"){
+    my_data <- my_data[my_data$target_year_start != min_year,]
+  }
+  
+  
+  wide_tbl <- my_data |> 
     select(all_of(c("hb_name", "target_year_start", column_name))) |> 
-    pivot_wider(names_from = target_year_start, values_from = column_name) |> 
-    select(all_of(c("hb_name", as.character(seq(min_year, max_year)))))
-  
-  # my_color_pal <- c("#9B4393", "white", "#83BB26")
-  
+    mutate(fin_year_lbl = glue("{target_year_start}/{(target_year_start + 1) %% 100}")) |> 
+    arrange(target_year_start) |> 
+    select(-target_year_start) |> 
+    pivot_wider(names_from = fin_year_lbl, values_from = column_name)
+
   digits2round <- ifelse(is_percentage_val, 2, 3)
   
   my_reactbl <- reactable(
@@ -31,7 +37,7 @@ build_shares_indices_tbl <- function(data, my_title, column_name, is_percentage_
       format = colFormat(percent = is_percentage_val, digits = digits2round)
     ), 
     columns = list(
-      hb_name = colDef(name = "Healthboard")
+      hb_name = colDef(name = "Health Board")
     )
   ) |> 
     reactablefmtr::add_title(my_title)

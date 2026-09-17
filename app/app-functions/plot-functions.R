@@ -13,7 +13,7 @@ plot_empty_with_text <- function(my_text){
 }
 
 
-plot_shares_indices_lines <- function(data_, percentage, chart_title){
+plot_shares_indices_lines <- function(data_, stat_label, is_diff = FALSE, percentage, chart_title){
   
   if(isTRUE(percentage)){
     round_val <- 3
@@ -24,6 +24,11 @@ plot_shares_indices_lines <- function(data_, percentage, chart_title){
   label_fin_year <- function(x){
     glue("{x}/{x+1-2000}")
   }
+  
+  # plot parameters
+  # axis titles
+  x_title <- "Year"
+  y_title <- stat_label
   
   p <- ggplot(data_, aes(
     x = target_year_start, 
@@ -36,7 +41,7 @@ plot_shares_indices_lines <- function(data_, percentage, chart_title){
     scale_x_continuous(labels = label_fin_year)
   
   # add an intercept line for 1 if plotting indices
-  if(!isTRUE(percentage)){
+  if(isFALSE(percentage) & isFALSE(is_diff)){
     p <- p + 
       geom_hline_interactive(yintercept=1, linetype="dashed")
   }
@@ -54,7 +59,7 @@ plot_shares_indices_lines <- function(data_, percentage, chart_title){
     ) +
     scale_color_manual_interactive(values = hb_colors)+
     scale_shape_manual_interactive(values = c(1:14))+
-    labs(title = chart_title, x = "Year Start", y = "Value") +
+    labs(title = chart_title, x = x_title, y = y_title) +
     line_chart_theme() +
     guides(color = guide_legend(nrow = 14)) + # Wrap legend
     theme(legend.position = "right", 
@@ -87,6 +92,7 @@ plot_shares_indices_lines <- function(data_, percentage, chart_title){
     opts_tooltip(css = "background-color:lightgray; color:black; border-radius:10px;"), 
     opts_selection(css = select_hover_css, type = "multiple"), 
     opts_selection_inv(css = inv_css), 
-    opts_sizing(rescale = TRUE, width = 0.5)
+    opts_sizing(rescale = TRUE, width = 0.5), 
+    opts_toolbar(hidden = c('lasso_select', 'lasso_deselect'), fixed = TRUE)
   ))
 }
