@@ -1,0 +1,32 @@
+[
+    {
+        "target_year_start": 25,
+        "target_year_end": 26,
+        "data_url": "https://www.publichealthscotland.scot/media/28612/resource-allocations-2025-26.zip"
+    },
+    {
+        "target_year_start": 24,
+        "target_year_end": 25,
+        "data_url": "https://www.publichealthscotland.scot/media/21272/resource-allocations-2024_25.zip"
+    },
+    {
+        "target_year_start": 23,
+        "target_year_end": 24,
+        "data_url": "https://www.publichealthscotland.scot/media/21281/resource-allocations-2023_24.zip"
+    },
+    {
+        "target_year_start": 22,
+        "target_year_end": 23,
+        "data_url": "https://webarchive.nrscotland.gov.uk/20230710191506mp_/https://beta.isdscotland.org/media/9496/resource-allocations-datazone-hscp_2022_23.xlsm"
+    },
+    {
+        "target_year_start": 21,
+        "target_year_end": 22,
+        "data_url": "https://webarchive.nrscotland.gov.uk/20220517005746mp_/https://beta.isdscotland.org/media/1437/2021-22-resource-allocations-datazone-data.xlsm"
+    },
+    {
+        "target_year_start": 20,
+        "target_year_end": 21,
+        "data_url": "https://webarchive.nrscotland.gov.uk/20220517010059mp_/https://beta.isdscotland.org/media/3380/2020-21-resource-allocations-datazone-data.xlsm"
+    }
+]

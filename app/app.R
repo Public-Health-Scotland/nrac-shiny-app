@@ -5,58 +5,48 @@
 #'
 #' Author:Maiana Sanjuan
 #' Runtime:
-#' Memory:16GB
+#' Memory:10GB
 #' CPUs:1
 #'
-# set-up ----
+
+# set-up ------------------------------------------------------------------
 
 # load packages
 source("set-up.R")
 
-# ui ----
+# ui ----------------------------------------------------------------------
 
-ui <- fluidPage(
+ui <- page_navbar(
   
-  tagList(
-    
-    navbarPage(
-      id = "intabset", # id used for jumping between tabs
-      position = "fixed-top",
-      collapsible = "true",
-      title = div(
-        tags$a(img(src = "white-logo.png", height = 40,
-                   alt ="Go to Public Health Scotland (external site)"),
-               href = "https://www.publichealthscotland.scot/",
-               target = "_blank"), # PHS logo links to PHS website
-        style = "position: relative; top: -10px;"),
-      windowTitle = "NRAC Dashboard", # Title for browser tab
-      header = source(file.path("header.R"), local=TRUE)$value,
-      
-      ## intro-page ----
-      
-      tabPanel(
-        title = "Introduction",
-        icon = icon_no_warning_fn("circle-info"),
-        value = "intro",
-        source(file.path("pages/introduction/intro-ui.R"), local = TRUE)$value
-      )
-      
-    ) # navbar
-    
-  ) # tag list
+  title = "NRAC Dashboard", 
   
-) # fluid page
+  nav_panel("Shares and Indices",
+            source(
+              file.path("pages/shares-indices/shares-indices-ui.R"),
+              local = TRUE
+            )$value
+            ),
+  
+  nav_panel("Marginal Change",
+            source(
+              file.path("pages/marginal-change/marginal-change-ui.R"),
+              local = TRUE
+            )$value
+  )
+  
+)
 
-# server ----
+# server ------------------------------------------------------------------
+
 server <- function(input, output, session){
   
-  # modules ----
+  source(file.path("pages/shares-indices/shares-indices-server.R"),
+         local = TRUE)$value
   
-  # functions ----
+  source(file.path("pages/marginal-change/marginal-change-server.R"),
+         local = TRUE)$value
   
-  # pages ----
-  source(file.path("pages/introduction/intro-server.R"), local = TRUE)$value
 }
 
-# run the application ----
-shinyApp(ui=ui, server=server)
+# run the app -------------------------------------------------------------
+shinyApp(ui = ui, server = server)
