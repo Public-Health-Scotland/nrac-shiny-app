@@ -156,7 +156,21 @@ marginal_changes <- full_join(head_1, tail_1,
   select(care_programme, hb_name, year_label, change_0, change_1, change_2, change_3, change_4) |> 
   arrange(care_programme, hb_name, year_label)
 
-
+# marginal changes absolute difference ----
+marginal_changes_diff <- marginal_changes |> 
+  pivot_longer(change_0:change_4, 
+               names_to = "change",
+               values_to = "marginal_change_value") |> 
+  group_by(care_programme, hb_name) |> 
+  mutate(diff = round(
+    (marginal_change_value - lag(marginal_change_value))/lag(marginal_change_value)*100
+  , 3)) |>
+  ungroup() |> 
+  mutate(diff = ifelse(
+    round(marginal_change_value, 8) == round(lag(marginal_change_value), 8), 
+    lag(diff), 
+    diff)
+      )
 
 # write app data to SQLite database ----
 
@@ -170,6 +184,7 @@ dbWriteTable(nracdb, "indices", indices, overwrite = TRUE)
 
 ## marginal change ----
 dbWriteTable(nracdb, "marginal_changes", marginal_changes, overwrite = TRUE)
+dbWriteTable(nracdb, "marginal_changes_diff", marginal_changes_diff, overwrite = TRUE)
 
 # test query
 # dbGetQuery(nracdb, 'SELECT * FROM shares LIMIT 5')
