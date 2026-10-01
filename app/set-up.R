@@ -69,6 +69,19 @@ showtext_auto()
 # color palettes ----
 hb_colors <- c(viridis(14, option = "turbo"))
 
+# plot settings ----
+
+# css options for hovering over/selecting a line or point
+select_hover_css <- "
+  filter: brightness(75%);
+  cursor: pointer;
+  transition: all 0.5s ease-out;
+  filter: brightness(1.15);
+  stroke-width: 1.3px 
+"
+# css for stuff that isnt selected, stuff that isnt selected is greyed out
+inv_css <- "opacity:0.3; transition: all 0.2s ease-out;"
+
 # load functions ----
 
 for (file_ in list.files("app-functions/", full.names = TRUE)) {

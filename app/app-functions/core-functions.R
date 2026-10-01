@@ -12,6 +12,11 @@ linebreaks <- function(n) {
   HTML(strrep(br(), n))
 }
 
+# Make financial year label ----
+label_fin_year <- function(x){
+  glue("{x}/{x+1-2000}")
+}
+
 # Get name from list value ----
 #' value_2_name
 #'
@@ -45,7 +50,7 @@ withNavySpinner <- function(out, color_) {
 #          )
 # }
 
-## Function to format a given entry in a table ----
+# Format a given entry in a table ----
 format_entry <- function(x, dp = 0, perc = F) {
   # x (numeric, char): entry
   # dp (int): number of decimal places

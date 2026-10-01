@@ -60,7 +60,7 @@ output$si_plot <- renderGirafe({
     
   } else {
     
-    plot_empty_with_text(empty_dataset_user_msg)
+    plot_empty(empty_dataset_user_msg)
     
   }
   
@@ -108,7 +108,7 @@ output$si_plot_diff <- renderGirafe({
     
   } else {
     
-    plot_empty_with_text(empty_dataset_user_msg)
+    plot_empty(empty_dataset_user_msg)
     
   }
   

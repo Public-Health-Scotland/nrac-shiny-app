@@ -18,7 +18,7 @@ marginal_change <- reactive({
                  FROM %s
                  WHERE care_programme = '%s'
                  AND hb_name IN %s",
-                 tbl_name, programme_input, hb_input)
+                   tbl_name, programme_input, hb_input)
   
   # extract data selected by user from the SQLite database
   nracdb <- dbConnect(SQLite(), sqlite_path)
@@ -27,7 +27,7 @@ marginal_change <- reactive({
   dbGetQuery(nracdb, query) |>
     arrange(hb_name) |> 
     select(-care_programme)
-
+  
 })
 
 
@@ -38,21 +38,21 @@ marginal_change <- reactive({
 output$mc_table <- renderReactable({
   
   reactable(marginal_change(), 
-             striped = TRUE,
-             defaultPageSize = 14,
-             theme = espn(font_size = 16, header_font_size = 18),
-             # style = list(fontSize = "1.875rem"),
-             highlight = TRUE, # highlight row on hover
-             defaultColDef = colDef(
-               # style = color_scales(wide_tbl, colors = my_color_pal, span = TRUE, highlight = TRUE), 
-               format = colFormat(percent = TRUE, digits = 3)
-             ), 
-             columns = list(
-               hb_name = colDef(name = "Healthboard")
-             )
+            striped = TRUE,
+            defaultPageSize = 14,
+            theme = espn(font_size = 16, header_font_size = 18),
+            # style = list(fontSize = "1.875rem"),
+            highlight = TRUE, # highlight row on hover
+            defaultColDef = colDef(
+              # style = color_scales(wide_tbl, colors = my_color_pal, span = TRUE, highlight = TRUE), 
+              format = colFormat(percent = TRUE, digits = 3)
+            ), 
+            columns = list(
+              hb_name = colDef(name = "Healthboard")
+            )
   )
-    
-    
+  
+  
 })
 
 # marginal change_plot ----
@@ -80,30 +80,18 @@ output$mc_plot <- renderGirafe({
              )
     )
   
-  p <- ggplot2::ggplot(plot_df, aes(change_label_human, share, group = ""))+
-    geom_line_interactive()+
-    facet_grid(vars(hb_name), vars(year_label), scales = "free_y")+
-    theme(axis.text.x = element_text(angle = 90)) +
-    xlab("marginal change")
+  # plot function inputs
+  plot_inputs <- list(
+    plot_title = "Marginal Change in Share by Adjustment, Year-On-Year",
+    plot_subtitle = input$hb_in_mc, 
+    xlab = "Marginal Change", 
+    ylab = "Share"
+      )
+
+  p <- plot_marginal_change_lines(plot_df, plot_inputs)
   
-  # css options for hovering over/selecting a line or point
-  select_hover_css <- "
-  filter: brightness(75%);
-  cursor: pointer;
-  transition: all 0.5s ease-out;
-  filter: brightness(1.15);
-  stroke-width: 1.3px 
-"
-  # css for stuff that isnt selected, stuff that isnt selected is greyed out
-  inv_css <- "opacity:0.3; transition: all 0.2s ease-out;"
+  # render interactive plot with some custom global settings
+  plot_interactive(p)
   
-  # Convert ggplot to interactive Girafe object
-  girafe(ggobj = p , height_svg = 3, options = list(
-    opts_hover(css = select_hover_css),
-    opts_tooltip(css = "background-color:lightgray; color:black; border-radius:10px;"), 
-    opts_selection(css = select_hover_css, type = "multiple"), 
-    opts_selection_inv(css = inv_css), 
-    opts_sizing(rescale = TRUE, width = 0.5)
-  ))
 })
 
