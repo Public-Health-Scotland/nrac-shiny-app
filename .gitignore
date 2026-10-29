@@ -48,5 +48,25 @@ po/*~
 # RStudio Connect folder
 rsconnect/
 
-# data
+# data folder
 app/data/
+
+# dev folder
+dev/
+
+# common data file extensions
+*.csv
+*.rds
+*.xlsx
+*.xlsm
+*.json
+*.zip
+*.uuid
+
+# credentials
+create-credentials.R
+deployment-secrets.R
+
+# exceptions
+!data-urls.json
+!hb_cypher_to_name.json

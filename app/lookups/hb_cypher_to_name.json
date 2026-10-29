@@ -1,0 +1,18 @@
+[
+    {"hb_cypher": "A", "hb_name": "NHS Ayrshire & Arran"},
+    {"hb_cypher": "B", "hb_name": "NHS Borders"},
+    {"hb_cypher": "F", "hb_name": "NHS Fife"},
+    {"hb_cypher": "G", "hb_name": "NHS Greater Glasgow & Clyde"},
+    {"hb_cypher": "H", "hb_name": "NHS Highland"},
+    {"hb_cypher": "L", "hb_name": "NHS Lanarkshire"},
+    {"hb_cypher": "N", "hb_name": "NHS Grampian"},
+    {"hb_cypher": "R", "hb_name": "NHS Orkney"},
+    {"hb_cypher": "S", "hb_name": "NHS Lothian"},
+    {"hb_cypher": "T", "hb_name": "NHS Tayside"},
+    {"hb_cypher": "V", "hb_name": "NHS Forth Valley"},
+    {"hb_cypher": "W", "hb_name": "NHS Western Isles"},
+    {"hb_cypher": "Y", "hb_name": "NHS Dumfries & Galloway"},
+    {"hb_cypher": "Z", "hb_name": "NHS Shetland"}
+]
+
+
