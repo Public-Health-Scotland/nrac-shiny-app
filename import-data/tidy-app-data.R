@@ -163,8 +163,8 @@ marginal_changes_diff <- marginal_changes |>
                values_to = "marginal_change_value") |> 
   group_by(care_programme, hb_name) |> 
   mutate(diff = round(
-    (marginal_change_value - lag(marginal_change_value))/lag(marginal_change_value)*100
-  , 3)) |>
+    (marginal_change_value - lag(marginal_change_value))/lag(marginal_change_value)
+  , 3))  |>
   ungroup() |> 
   mutate(diff = ifelse(
     round(marginal_change_value, 8) == round(lag(marginal_change_value), 8), 

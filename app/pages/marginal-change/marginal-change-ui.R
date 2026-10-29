@@ -28,7 +28,8 @@ layout_sidebar(
     nav_panel("Absolute Difference",
               br(), 
               navset_underline(
-                
+                nav_panel("Plot", girafeOutput("mc_diff_plot", width = "90%")),
+                nav_panel("Table", reactableOutput("mc_diff_table")) 
               )
     ) # nav_panel
     
